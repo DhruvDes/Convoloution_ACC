@@ -3,7 +3,7 @@
 ## GitHub repo provided 
 - The student has provided a GitHub repository link: https://github.com/DhruvDes/FPGA-ACC-MAC, which contains the project outline with all required information.
 
-## Part b: Team members listed 
+## Team members  
 - Dhruv Deshmukh(dad10090)
 - Fiaza
   
