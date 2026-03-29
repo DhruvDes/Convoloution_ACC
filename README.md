@@ -1,11 +1,12 @@
 # Convoloution Acc For ZYNQ 
 
-## Part a: GitHub repo provided 
-- 2.0 / 2.0 	The student has provided a GitHub repository link: https://github.com/DhruvDes/FPGA-ACC-MAC, which contains the project outline with all required information.
+## GitHub repo provided 
+- The student has provided a GitHub repository link: https://github.com/DhruvDes/FPGA-ACC-MAC, which contains the project outline with all required information.
 
-## Part b: Team members listed 
-- 0.0 / 2.0 	The student's solution does not list the members of the project team. The student is advised to include this information to meet the requirements.
-
+## Team members  
+- Dhruv Deshmukh(dad10090)
+- Fiaza
+  
 ## Part c: IP functionality 
 - 0.0 / 4.0 	The student's solution does not provide a brief description of the IP's intended functionality, including the mathematical operations performed and why these operations may be well-suited for hardware acceleration. The student is encouraged to include this information to meet the requirements.
 
