@@ -1,7 +1,7 @@
 # Convoloution Acc For ZYNQ 
 
 ## GitHub repo provided 
-- The student has provided a GitHub repository link: https://github.com/DhruvDes/FPGA-ACC-MAC, which contains the project outline with all required information.
+- https://github.com/DhruvDes/Convoloution_ACC
 
 ## Team members  
 - Dhruv Deshmukh(dad10090)
@@ -14,9 +14,9 @@ The intended functionality of this IP is to perform high-speed, deterministic 2-
 
 At its core, the IP performs a series of Multiply-Accumulate (MAC) operations. For an input image I and a kernel K, the value of an output pixel S at position (i,j) is defined by:
 $$S(i, j) = \sum_{m} \sum_{n} I(i+m, j+n) \cdot K(m, n)$$
-$$ all that means is do a 3x3 multiplication of the matrix and add up all the results to create one pixel. 
+<br> all that means is do a 3x3 multiplication of the matrix and add up all the results to create one pixel. 
 <img width="750" height="353" alt="image" src="https://github.com/user-attachments/assets/d3cddaeb-37a1-4812-89fe-6175a7b3d078" />
-*Credit:* https://www.researchgate.net/figure/An-example-of-convolution-operation-in-2D-2_fig3_324165524 
+<br>*Credit:* https://www.researchgate.net/figure/An-example-of-convolution-operation-in-2D-2_fig3_324165524 
 
 For a standard 3×3 kernel, this requires 9 multiplications and 8 additions per single output pixel. To process the 28,000 images in the benchmark, the system must perform over 197 million of these operations.
 1. The Inefficiency of General-Purpose Fetching
