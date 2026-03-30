@@ -7,12 +7,18 @@
 - Dhruv Deshmukh(dad10090)
 - Fiaza
   
-## IP motivation & functionality 
-The primary bottleneck in image processing isn't just the speed of the processor, but of moving data. In general-purpose architectures (x86 and ARM), the CPU spends time fetching pixels from memory (RAM or SD card) compared to the time it spends actually calculating the convolution.
+## IP Description: Hardware Convolution Accelerator
 
+The intended functionality of this IP is to perform high-speed, deterministic 2-dimensional convolution operations on image data. Unlike a general-purpose CPU that executes instructions sequentially, this IP is a dedicated data-path designed to ingest pixel streams and apply a 3 × 3 filter kernel in a single pass. It is designed to offload the most mathematically expensive layer of Convolutional from the host processor to a specialized hardware.
+1. Mathematical Operations
+
+At its core, the IP performs a series of Multiply-Accumulate (MAC) operations. For an input image I and a kernel K, the value of an output pixel S at position (i,j) is defined by:
+S(i,j)=m∑​n∑​I(i+m,j+n)⋅K(m,n)
+
+For a standard 3×3 kernel, this requires 9 multiplications and 8 additions per single output pixel. To process the 28,000 images in the benchmark, the system must perform over 197 million of these operations.
 1. The Inefficiency of General-Purpose Fetching
 
-Standard processors follow the von Neumann architecture, where every single operation requires fetching an instruction and data from memory. For a 3×3 convolution on a 28×28 image:
+Standard processors follow the von Neumann architecture, where every single operation requires fetching an instruction and data from memory. For a 3×3 convolution on a image 28x28 in this case:
 - The CPU approach: To calculate one output pixel, the CPU may fetch 9 input pixels. As the window slides, it fetches those same pixels again for the next output. This creates massive redundant traffic on the memory bus. Not to mention the Cache memory aslo being used by other processes. 
 - The Benchmark Reality: Looking at the ARM results (103.5s), the processor is likely "stalled" waiting for data to arrive from the SD card or slow memory. Even though the CPU load is at ~45%, it isn't being productive, it is idling while waiting for the next byte.
 
