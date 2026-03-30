@@ -7,10 +7,7 @@
 - Dhruv Deshmukh(dad10090)
 - Fiaza
   
-## Part c: IP functionality 
-- 0.0 / 4.0 	The student's solution does not provide a brief description of the IP's intended functionality, including the mathematical operations performed and why these operations may be this projectll-suited for hardware acceleration. The student is encouraged to include this information to meet the requirements.
-
-## IP motivation 
+## IP motivation & functionality 
 The primary bottleneck in image processing isn't just the speed of the processor, but of moving data. In general-purpose architectures (x86 and ARM), the CPU spends time fetching pixels from memory (RAM or SD card) compared to the time it spends actually calculating the convolution.
 
 1. The Inefficiency of General-Purpose Fetching
