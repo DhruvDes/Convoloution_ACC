@@ -5,7 +5,7 @@
 
 ## Team members  
 - Dhruv Deshmukh(dad10090)
-- Fiaza
+- Faiza
   
 ## IP Description: Hardware Convolution Accelerator
 
