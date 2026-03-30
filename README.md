@@ -35,8 +35,9 @@ Platform	Total Time (28k Images)	Inference
 x86 Platform	4.5s	High-speed caches hide the memory latency, but at the cost of massive pothis projectr consumption and complex out-of-order execution.
 ARM Platform	103.5s	Represents the "Edge" reality. Without high-end caches, the processor is strangled by memory access times, making real-time CV impossible.
 These benchmarks this projectre taken from platform that will be used in the final implimentation and librarie(scipy).
+- x86    
 <img width="100%" alt="Convolution performance on x86 architecture" src="https://github.com/DhruvDes/Convoloution_ACC/blob/main/Benchmarking/convolution_benchmark_x86.png?raw=true" />
-
+- ARM
 <img width="100%" alt="Convolution performance on ARM architecture" src="https://github.com/DhruvDes/Convoloution_ACC/blob/main/Benchmarking/convolution_benchmark_ARM.png?raw=true" />
 4. Conclusion: Efficiency over Brute Force
 
