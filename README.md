@@ -90,6 +90,36 @@ The IP is designed to sit on the AXI High-Performance (HP) Bus of the Zynq-7000.
 This will be the top most module. Which will be connected and interfaced with the AMD's DDR DMA access as shown, and encompassing all the other modules described.<br>
 <img width="1334" height="664" alt="Screenshot 2026-04-01 181131" src="https://github.com/user-attachments/assets/fd111ae6-1fe3-4a6c-8ad5-27f6199b0fe7" />
 This will be largely consisting of AXI4-stream to communicate with the host, and interrupt signals to inform the stop of pixel data and not nessirarraly the completion of the image. 
+The primary data path uses the AXI4-Stream (AXIS) protocol. This is a point-to-point interface designed for high-throughput data without the overhead of addresses.
+
+  ##### Interface Type: AXI4-Stream (Master and Slave).
+
+  Transaction Flow: The AXI DMA (an AMD IP) acts as the bridge. It reads pixels from DDR memory via AXI4-Memory Mapped (MM) and "pushes" them into our IP via the S_AXIS interface.
+    Key Signals:
+  
+-  TDATA [64:0]: Carries the 8, 8-bit grayscale pixel value.
+  
+ -  TVALID: Asserted by the source when data is ready.
+  -  TREADY: Asserted by our IP when it is ready to consume a pixel (Backpressure).
+  
+ -   TLAST: Asserted on the last pixel of an image row/frame to signal packet completion.
+
+2. Control Plane: PS ↔ IP (Configuration & Status)
+
+For non-streaming data like kernel coefficients and start/stop commands, the IP implements an AXI4-Lite interface. This allows the ARM processor to treat the IP like a set of memory addresses.
+
+   ##### Interface Type: AXI4-Lite (Slave).
+
+  Register Map (32-bit offset):
+
+  - 0x00: Control Reg (Bit 0: Start, Bit 1: Reset, Bit 2: Interrupt Enable).
+
+- 0x04: Status Reg (Bit 0: Idle, Bit 1: Done).
+ - [0:8]: Kernel Coefficients (9 registers storing K0,0​ through K2,2​).
+
+    - 0x30: Image Width (Number of pixels per row).
+
+    Key Signals: AWADDR, WDATA, WSTRB, BRESP (Standard AXI-Lite handshaking).
 
 #### Control Logic
 This module will be in charge of orchestrating the intire flow of the system namley handelling the interrupts for the BUI and activating rest of the modules. 
