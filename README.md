@@ -65,6 +65,25 @@ The motivation for this project is not just to be faster than ARM, but to use da
 ## IP architecture
 The overall high level architecture of the design is shown below.<br>
 <img width="960" height="540" alt="overall_design" src="https://github.com/user-attachments/assets/e26d2a51-3b23-477f-8925-64f3b7d72c3b" />
+#### IP Interfaces & System Integration
+
+The IP is designed to sit on the AXI High-Performance (HP) Bus of the Zynq-7000.
+
+  - Data Interface (AXI4-Stream): * S_AXIS: Ingests raw 8-bit pixel data from the PS (via DMA).
+
+   -   M_AXIS: Streams the processed 8-bit (truncated) pixels back to DDR memory.
+
+  - Configuration Interface (AXI4-Lite): Allows the ARM processor to write 3×3 kernel weights and start/stop the accelerator via memory-mapped I/O.
+
+   - Interrupts: A dedicated *_introut line signals the PS when an image frame has been fully processed.
+
+   To ensure system stability and performance, this project integrates the following standard Xilinx IP cores:
+
+   - AXI Direct Memory Access (DMA): Used to offload pixel transfers from the CPU, allowing the ARM core to perform other tasks while the FPGA processes the image.
+
+  - AXI-Stream Infrastructure: Utilizes AXI-Stream Data FIFOs to handle clock domain crossing and buffering between the high-speed PS and the IP core.
+
+  - Zynq7 Processing System: Configured to expose the M_AXI_GP (for control) and S_AXI_HP (for data) ports.
 
 ### IP sub-modules 
 #### BUI(Bus Interface)
