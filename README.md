@@ -20,6 +20,14 @@ $$S(i, j) = \sum_{m} \sum_{n} I(i+m, j+n) \cdot K(m, n)$$
 <br>*Credit:* https://www.researchgate.net/figure/An-example-of-convolution-operation-in-2D-2_fig3_324165524 
 
 For a standard 3×3 kernel, this requires 9 multiplications and 8 additions per single output pixel. To process the 28,000 images in the benchmark, the system must perform over 197 million of these operations.
+
+#### The MAC Structure:
+To process one pixel per clock cycle, the design utilizes a Parallel Multiply-Accumulate (MAC) Tree:
+
+-    9 Parallel Multipliers: Each of the 9 pixels in the current 3×3 window is multiplied by its corresponding kernel weight simultaneously.
+
+-    Pipelined Adder Tree: A 3-stage adder tree sums the 9 products. Pipelining is used here to ensure the design meets the 100MHz+ timing requirements on the Zynq-7000 fabric.
+    
 ### The Inefficiency of General-Purpose Fetching
 
 Standard processors follow the Von Neumann architecture, where every single operation requires fetching an instruction and data from memory. For a 3×3 convolution on a 28x28 image:
