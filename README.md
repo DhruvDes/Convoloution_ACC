@@ -87,7 +87,7 @@ The IP is designed to sit on the AXI High-Performance (HP) Bus of the Zynq-7000.
 
 ### IP sub-modules 
 #### BUI(Bus Interface)
-This will be the top most module. connection to the AMD's DDR DMA access as shown, and encompassing all the other modules described.<br>
+This will be the top most module. Which will be connected and interfaced with the AMD's DDR DMA access as shown, and encompassing all the other modules described.<br>
 <img width="1334" height="664" alt="Screenshot 2026-04-01 181131" src="https://github.com/user-attachments/assets/fd111ae6-1fe3-4a6c-8ad5-27f6199b0fe7" />
 
 
