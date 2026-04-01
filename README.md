@@ -11,7 +11,7 @@
 
 The intended functionality of this IP is to perform high-speed, deterministic 2-dimensional convolution operations on image data. Unlike a general-purpose CPU that executes instructions sequentially, this IP is a dedicated data-path designed to ingest pixel streams and apply a 3 × 3 filter kernel in a single pass. It is designed to offload the most mathematically expensive layer of convolutional from the host processor to a specialized hardware.
 
-1. Mathematical Operation
+### Mathematical Operation
 
 At its core, the IP performs a series of Multiply-Accumulate (MAC) operations. For an input image I, and a kernel K, the value of an output pixel S at position (i,j) is defined by:
 $$S(i, j) = \sum_{m} \sum_{n} I(i+m, j+n) \cdot K(m, n)$$
@@ -20,13 +20,13 @@ $$S(i, j) = \sum_{m} \sum_{n} I(i+m, j+n) \cdot K(m, n)$$
 <br>*Credit:* https://www.researchgate.net/figure/An-example-of-convolution-operation-in-2D-2_fig3_324165524 
 
 For a standard 3×3 kernel, this requires 9 multiplications and 8 additions per single output pixel. To process the 28,000 images in the benchmark, the system must perform over 197 million of these operations.
-2. The Inefficiency of General-Purpose Fetching
+### The Inefficiency of General-Purpose Fetching
 
 Standard processors follow the Von Neumann architecture, where every single operation requires fetching an instruction and data from memory. For a 3×3 convolution on a 28x28 image:
 - The CPU approach: To calculate 1 output pixel, the CPU may fetch 9 input pixels. As the window slides, it fetches those same pixels again for the next output. This creates a massive redundant traffic on the memory bus. additionally, the cache memory is also being used by other processes. 
 - The Benchmark Reality: Looking at the ARM results (103.5s), the program is likely "stalled," waiting for data to arrive from the SD card or slower memory.
   
-3. Specialized Data Reuse (The Accelerator Advantage)
+### Specialized Data Reuse (The Accelerator Advantage)
 
 A dedicated Convolution Accelerator (ACC) eliminates this "memory Tax" by implementing line buffers. Instead of hitting the SD card for every sliding window, this project chooses to impliment:
 - The ACC reads a line of pixel once.
@@ -34,7 +34,7 @@ A dedicated Convolution Accelerator (ACC) eliminates this "memory Tax" by implem
 - It reuses that pixel for every overlapping convolution window simultaneously, and only needs slow reads to fill in a line while its alreay working on data.
 - Result we theoretically reduce the memory bandwidth requirement, allowing for the computation as the data is streaming.
 
-4. Comparing the Benchmarks
+### Comparing the Benchmarks
 
 The disparity in the benchmarks calls for optimization:
 Platform Total Time (28k 28x28 greyscale Images)	Inference
@@ -46,7 +46,7 @@ Below are the benchmarks taken from the devices originally and using SciPy libra
 - ARM
 <img width="100%" alt="Convolution performance on ARM architecture" src="https://github.com/DhruvDes/Convoloution_ACC/blob/main/Benchmarking/convolution_benchmark_ARM.png?raw=true" />
 
-5. Conclusion: Efficiency over Brute Force
+### Conclusion: Efficiency over Brute Force
 
 The motivation for this project is not just to be faster than ARM, but to use data smarter. By designing hardware that is aware of the convolution's sliding-window nature, this project can:
 
@@ -54,12 +54,32 @@ The motivation for this project is not just to be faster than ARM, but to use da
    - Potentially minimize time by keeping data local to the math units.
    - Allow for a 28×28 grayscale operation (and eventually much larger models with colors) to run in milliseconds on the ZYNQ.
 
-## Part d: IP sub-modules 
+## IP architecture
+The overall high level architecture of the design is shown below.<br>
+<img width="960" height="540" alt="overall_design" src="https://github.com/user-attachments/assets/e26d2a51-3b23-477f-8925-64f3b7d72c3b" />
 
-- 0.0 / 5.0 	The student's solution does not describe the hardware modules in the IP and what they do. The student is encouraged to include this information to meet the requirements.
-## Part d: Use of large monolithic module
-- 0.0 / -2.0 	The student's solution does not provide information about the use of a large monolithic module. The student is encouraged to consider breaking the module into smaller sub-modules to improve parallelism and modularity.
-## Part d: IP interfaces 
-- 0.0 / 5.0 	The student's solution does not describe the interfaces betthis projecten the modules and betthis projecten the host/PS and the IP. The student is encouraged to include this information to meet the requirements.
-## Part d: Use of existing AMD IPs 	
-- 0.0 / -1.0 	The student's solution does not indicate the use of existing AMD IPs. The student is encouraged to consider using existing AMD IPs if applicable.
+### IP sub-modules 
+#### BUI(Bus Interface)
+This will be the top most module usign AMD IP's as shown and encompassing all the other modules described.<br>
+<img width="1334" height="664" alt="Screenshot 2026-04-01 181131" src="https://github.com/user-attachments/assets/fd111ae6-1fe3-4a6c-8ad5-27f6199b0fe7" />
+
+#### Control Logic
+This module will be in charge of orchestrating the intire flow of the system namley handelling the interrupts for the BUI and activating rest of the modules. 
+
+#### Cntrl Reg
+This module will be used for writing the kernel data and a few control signals roughly a 8x10 memory.  
+
+#### Line Buffer 
+A line buffer to recieve nebhouring pixel data and making the computation to not fetch same row data multiple times. There will be 4 of these rows. 4 rows are used specifically to be loading in data while other 3 are being used. 
+
+#### MUX
+This module will be in charge of choosing the line buffer to use according to the instructions form the Control Logic module. 
+
+#### MAC and Truncate Unit
+This module will be responsible for carrying out the actual computation for given data by the muxes. It will not have any knowledge on other devices or positioning of the matrix.
+It may be implimented in 2 diffrent ways depending on the timing analysis. 
+1. Taking advantage of the 220 DSP slices which can multiply in one clk cycle. We will only need 18 of them.
+2. Taking advantage of 3x3 systollic array. Increasign latency but negating any timing violations. 
+
+#### Write-Back Memory
+This module will store the data from the MAC and Truncate unit, and send back the using the BUI. A 8x64 buffer memory to be read by the main device through the BUI.
