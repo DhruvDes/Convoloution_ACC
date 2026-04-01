@@ -137,6 +137,9 @@ This module will be in charge of choosing the line buffer to use according to th
 This module will be responsible for carrying out the actual computation for given data by the muxes. It will not have any knowledge on other devices or positioning of the matrix.
 It may be implimented in 2 diffrent ways depending on the timing analysis. 
 1. Taking advantage of the 220 DSP slices which can multiply in one clk cycle. We will only need 18 of them.
+   <img width="930" height="154" alt="image" src="https://github.com/user-attachments/assets/177b1aea-bb18-4aa8-8fd4-7234f82e24ce" />
+  - It is possible as according to timing report there is  a lot more head room to complete computation in a single cycle.
+
 2. Taking advantage of 3x3 systollic array. Increasign latency but negating any timing violations. 
 
 #### Write-Back Memory
