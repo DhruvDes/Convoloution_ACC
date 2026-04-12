@@ -52,7 +52,7 @@ Below are the benchmarks taken from the devices originally and using SciPy libra
 - x86    
 <img width="100%" alt="Convolution performance on x86 architecture" src="https://github.com/DhruvDes/Convoloution_ACC/blob/main/Benchmarking/convolution_benchmark_x86.png?raw=true" />
 - ARM
-<img width="100%" alt="Convolution performance on ARM architecture" src="https://github.com/DhruvDes/Convoloution_ACC/blob/main/Benchmarking/convolution_benchmark_ARM.png?raw=true" />
+<img width="100%" alt="Convolution performance on ARM architecture" src="https://github.com/DhruvDes/Convoloution_ACC/blob/main/[2]_Benchmarking/convolution_benchmark_ARM.png?raw=true" />
 
 ### Conclusion: Efficiency over Brute Force
 
@@ -65,82 +65,4 @@ The motivation for this project is not just to be faster than ARM, but to use da
 ## IP architecture
 The overall high level architecture of the design is shown below.<br>
 <img width="960" height="540" alt="overall_design" src="https://github.com/user-attachments/assets/e26d2a51-3b23-477f-8925-64f3b7d72c3b" />
-#### IP Interfaces & System Integration
-
-The IP is designed to sit on the AXI High-Performance (HP) Bus of the Zynq-7000.
-
-  - Data Interface (AXI4-Stream): * S_AXIS: Ingests raw 8-bit pixel data from the PS (via DMA).
-
-   -   M_AXIS: Streams the processed 8-bit (truncated) pixels back to DDR memory.
-
-  - Configuration Interface (AXI4-Lite): Allows the ARM processor to write 3×3 kernel weights and start/stop the accelerator via memory-mapped I/O.
-
-   - Interrupts: A dedicated *_introut line signals the PS when an image frame has been fully processed.
-
-   To ensure system stability and performance, this project integrates the following standard Xilinx IP cores:
-
-   - AXI Direct Memory Access (DMA): Used to offload pixel transfers from the CPU, allowing the ARM core to perform other tasks while the FPGA processes the image.
-
-  - AXI-Stream Infrastructure: Utilizes AXI-Stream Data FIFOs to handle clock domain crossing and buffering between the high-speed PS and the IP core.
-
-  - Zynq7 Processing System: Configured to expose the M_AXI_GP (for control) and S_AXI_HP (for data) ports.
-
-### IP sub-modules 
-#### BUI(Bus Interface)
-This will be the top most module. Which will be connected and interfaced with the AMD's DDR DMA access as shown, and encompassing all the other modules described.<br>
-<img width="1334" height="664" alt="Screenshot 2026-04-01 181131" src="https://github.com/user-attachments/assets/fd111ae6-1fe3-4a6c-8ad5-27f6199b0fe7" />
-This will be largely consisting of AXI4-stream to communicate with the host, and interrupt signals to inform the stop of pixel data and not nessirarraly the completion of the image. 
-The primary data path uses the AXI4-Stream (AXIS) protocol. This is a point-to-point interface designed for high-throughput data without the overhead of addresses.
-
-  ##### Interface Type: AXI4-Stream (Master and Slave).
-
-  Transaction Flow: The AXI DMA (an AMD IP) acts as the bridge. It reads pixels from DDR memory via AXI4-Memory Mapped (MM) and "pushes" them into our IP via the S_AXIS interface.
-    Key Signals:
-  
--  TDATA [64:0]: Carries the 8, 8-bit grayscale pixel value.
-  
- -  TVALID: Asserted by the source when data is ready.
-  -  TREADY: Asserted by our IP when it is ready to consume a pixel (Backpressure).
-  
- -   TLAST: Asserted on the last pixel of an image row/frame to signal packet completion.
-
-2. Control Plane: PS ↔ IP (Configuration & Status)
-
-For non-streaming data like kernel coefficients and start/stop commands, the IP implements an AXI4-Lite interface. This allows the ARM processor to treat the IP like a set of memory addresses.
-
-   ##### Interface Type: AXI4-Lite (Slave).
-
-  Register Map (32-bit offset):
-
-  - 0x00: Control Reg (Bit 0: Start, Bit 1: Reset, Bit 2: Interrupt Enable).
-
-- 0x04: Status Reg (Bit 0: Idle, Bit 1: Done).
- - [0:8]: Kernel Coefficients (9 registers storing K0,0​ through K2,2​).
-
-    - 0x30: Image Width (Number of pixels per row).
-
-    Key Signals: AWADDR, WDATA, WSTRB, BRESP (Standard AXI-Lite handshaking).
-
-#### Control Logic
-This module will be in charge of orchestrating the intire flow of the system namley handelling the interrupts for the BUI and activating rest of the modules. 
-
-#### Cntrl Reg
-This module will be used for writing the kernel data and a few control signals roughly a 8x10 memory.  
-
-#### Line Buffer 
-A line buffer to recieve nebhouring pixel data and making the computation to not fetch same row data multiple times. There will be 4 of these rows. 4 rows are used specifically to be loading in data while other 3 are being used. 
-
-#### MUX
-This module will be in charge of choosing the line buffer to use according to the instructions form the Control Logic module. 
-
-#### MAC and Truncate Unit
-This module will be responsible for carrying out the actual computation for given data by the muxes. It will not have any knowledge on other devices or positioning of the matrix.
-It may be implimented in 2 diffrent ways depending on the timing analysis. 
-1. Taking advantage of the 220 DSP slices which can multiply in one clk cycle. We will only need 18 of them.
-   <img width="930" height="154" alt="image" src="https://github.com/user-attachments/assets/177b1aea-bb18-4aa8-8fd4-7234f82e24ce" />
-  - It is possible as according to timing report there is  a lot more head room to complete computation in a single cycle.
-
-2. Taking advantage of 3x3 systollic array. Increasign latency but negating any timing violations. 
-
-#### Write-Back Memory
-This module will store the data from the MAC and Truncate unit, and send back the using the BUI. A 8x64 buffer memory to be read by the main device through the BUI.
+In detail requirements of the design is provided in; **design_req.md**
