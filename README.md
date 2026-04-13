@@ -6,6 +6,7 @@
 ## Team members  
 - Dhruv Deshmukh(dad10090)
 - Faiza Zahin Tasfia(ft2335)
+- Luka Kitamura (lk3283)
   
 ## IP Description: Hardware Convolution Accelerator
 
