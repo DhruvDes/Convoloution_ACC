@@ -1,0 +1,12 @@
+Time resolution is 1 ps
+------------------Running Test----------------------
+test passed for this set of values
+------------------Running Test----------------------
+test passed for this set of values
+------------------Running Test----------------------
+test passed for this set of values
+------------------Running Test----------------------
+test passed for this set of values
+------------------Running Test----------------------
+test passed for this set of values
+$finish called at time : 395 ns : File "D:/Myproj/GitHub/convAccProject/configMemory/configMemory.srcs/sim_1/new/tb.sv" Line 173

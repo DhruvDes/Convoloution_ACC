@@ -1,0 +1,24 @@
+#-----------------------------------------------------------
+# Vivado v2025.2 (64-bit)
+# SW Build 6299465 on Fri Nov 14 19:35:11 GMT 2025
+# IP Build 6300035 on Fri Nov 14 10:48:45 MST 2025
+# SharedData Build 6298862 on Thu Nov 13 04:50:51 MST 2025
+# Start of session at: Sat Apr 11 14:43:19 2026
+# Process ID         : 3284
+# Current directory  : D:/Myproj/GitHub/convAccProject/LoopBackFIFO/LoopBackFIFO.runs/loopBackFifoBD_axi_mem_intercon_1_imp_auto_pc_0_synth_1
+# Command line       : vivado.exe -log loopBackFifoBD_axi_mem_intercon_1_imp_auto_pc_0.vds -product Vivado -mode batch -messageDb vivado.pb -notrace -source loopBackFifoBD_axi_mem_intercon_1_imp_auto_pc_0.tcl
+# Log file           : D:/Myproj/GitHub/convAccProject/LoopBackFIFO/LoopBackFIFO.runs/loopBackFifoBD_axi_mem_intercon_1_imp_auto_pc_0_synth_1/loopBackFifoBD_axi_mem_intercon_1_imp_auto_pc_0.vds
+# Journal file       : D:/Myproj/GitHub/convAccProject/LoopBackFIFO/LoopBackFIFO.runs/loopBackFifoBD_axi_mem_intercon_1_imp_auto_pc_0_synth_1\vivado.jou
+# Running On         : DESKTOP-8NFLPRC
+# Platform           : Windows Server 2016 or Windows 10
+# Operating System   : 26200
+# Processor Detail   : 13th Gen Intel(R) Core(TM) i7-13650HX
+# CPU Frequency      : 2803 MHz
+# CPU Physical cores : 14
+# CPU Logical cores  : 20
+# Host memory        : 68320 MB
+# Swap memory        : 4294 MB
+# Total Virtual      : 72615 MB
+# Available Virtual  : 57430 MB
+#-----------------------------------------------------------
+source loopBackFifoBD_axi_mem_intercon_1_imp_auto_pc_0.tcl -notrace

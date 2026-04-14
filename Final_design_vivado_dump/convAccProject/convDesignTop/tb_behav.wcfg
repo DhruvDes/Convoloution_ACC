@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wave_config>
+   <wave_state>
+   </wave_state>
+   <db_ref_list>
+      <db_ref path="tb_behav.wdb" id="1">
+         <top_modules>
+            <top_module name="\$unit_Interface_sv_1270001972 " />
+            <top_module name="glbl" />
+            <top_module name="std" />
+            <top_module name="tb" />
+            <top_module name="uvm_pkg" />
+         </top_modules>
+      </db_ref>
+   </db_ref_list>
+   <zoom_setting>
+      <ZoomStartTime time="216.666 ns"></ZoomStartTime>
+      <ZoomEndTime time="916.667 ns"></ZoomEndTime>
+      <Cursor1Time time="375.000 ns"></Cursor1Time>
+   </zoom_setting>
+   <column_width_setting>
+      <NameColumnWidth column_width="224"></NameColumnWidth>
+      <ValueColumnWidth column_width="68"></ValueColumnWidth>
+   </column_width_setting>
+   <WVObjectSize size="5" />
+   <wvobject fp_name="/tb/DUT/bui0/clk" type="logic">
+      <obj_property name="ElementShortName">clk</obj_property>
+      <obj_property name="ObjectShortName">clk</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tb/DUT/bui0/arstn" type="logic">
+      <obj_property name="ElementShortName">arstn</obj_property>
+      <obj_property name="ObjectShortName">arstn</obj_property>
+   </wvobject>
+   <wvobject fp_name="group125" type="group">
+      <obj_property name="label">DUT INterface</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="isExpanded"></obj_property>
+      <wvobject fp_name="/tb/DUT/s00_axis_tvalid" type="logic">
+         <obj_property name="ElementShortName">s00_axis_tvalid</obj_property>
+         <obj_property name="ObjectShortName">s00_axis_tvalid</obj_property>
+      </wvobject>
+      <wvobject fp_name="/tb/DUT/s00_axis_tready" type="logic">
+         <obj_property name="ElementShortName">s00_axis_tready</obj_property>
+         <obj_property name="ObjectShortName">s00_axis_tready</obj_property>
+      </wvobject>
+      <wvobject fp_name="/tb/DUT/s00_axis_tdata" type="array">
+         <obj_property name="ElementShortName">s00_axis_tdata[31:0]</obj_property>
+         <obj_property name="ObjectShortName">s00_axis_tdata[31:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/tb/DUT/s00_axis_tlast" type="logic">
+         <obj_property name="ElementShortName">s00_axis_tlast</obj_property>
+         <obj_property name="ObjectShortName">s00_axis_tlast</obj_property>
+      </wvobject>
+   </wvobject>
+   <wvobject fp_name="group162" type="group">
+      <obj_property name="label">Dut Internal</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="isExpanded"></obj_property>
+      <wvobject fp_name="group472" type="group">
+         <obj_property name="label">BUI</obj_property>
+         <obj_property name="DisplayName">label</obj_property>
+         <obj_property name="isExpanded"></obj_property>
+         <wvobject fp_name="group473" type="group">
+            <obj_property name="label">cfg</obj_property>
+            <obj_property name="DisplayName">label</obj_property>
+            <obj_property name="isExpanded"></obj_property>
+            <wvobject fp_name="/tb/DUT/bui0/cfg_valid" type="logic">
+               <obj_property name="ElementShortName">cfg_valid</obj_property>
+               <obj_property name="ObjectShortName">cfg_valid</obj_property>
+            </wvobject>
+            <wvobject fp_name="/tb/DUT/bui0/cfg_ready" type="logic">
+               <obj_property name="ElementShortName">cfg_ready</obj_property>
+               <obj_property name="ObjectShortName">cfg_ready</obj_property>
+            </wvobject>
+            <wvobject fp_name="/tb/DUT/bui0/cfg_data" type="array">
+               <obj_property name="ElementShortName">cfg_data[31:0]</obj_property>
+               <obj_property name="ObjectShortName">cfg_data[31:0]</obj_property>
+            </wvobject>
+         </wvobject>
+         <wvobject fp_name="group480" type="group">
+            <obj_property name="label">LineBuffer</obj_property>
+            <obj_property name="DisplayName">label</obj_property>
+            <obj_property name="isExpanded"></obj_property>
+            <wvobject fp_name="/tb/DUT/lb_core0/frame_start" type="logic">
+               <obj_property name="ElementShortName">frame_start</obj_property>
+               <obj_property name="ObjectShortName">frame_start</obj_property>
+            </wvobject>
+            <wvobject fp_name="/tb/DUT/bui0/M_PX_TVALID" type="logic">
+               <obj_property name="ElementShortName">M_PX_TVALID</obj_property>
+               <obj_property name="ObjectShortName">M_PX_TVALID</obj_property>
+            </wvobject>
+            <wvobject fp_name="/tb/DUT/bui0/M_PX_TREADY" type="logic">
+               <obj_property name="ElementShortName">M_PX_TREADY</obj_property>
+               <obj_property name="ObjectShortName">M_PX_TREADY</obj_property>
+            </wvobject>
+            <wvobject fp_name="/tb/DUT/bui0/M_PX_TLAST" type="logic">
+               <obj_property name="ElementShortName">M_PX_TLAST</obj_property>
+               <obj_property name="ObjectShortName">M_PX_TLAST</obj_property>
+            </wvobject>
+            <wvobject fp_name="/tb/DUT/bui0/M_PX_TDATA" type="array">
+               <obj_property name="ElementShortName">M_PX_TDATA[31:0]</obj_property>
+               <obj_property name="ObjectShortName">M_PX_TDATA[31:0]</obj_property>
+            </wvobject>
+            <wvobject fp_name="/tb/DUT/lb_core0/mem" type="array">
+               <obj_property name="ElementShortName">mem[0:3][0:63][7:0]</obj_property>
+               <obj_property name="ObjectShortName">mem[0:3][0:63][7:0]</obj_property>
+               <obj_property name="isExpanded"></obj_property>
+            </wvobject>
+            <wvobject fp_name="/tb/DUT/lb_core0/buf_ready" type="logic">
+               <obj_property name="ElementShortName">buf_ready</obj_property>
+               <obj_property name="ObjectShortName">buf_ready</obj_property>
+            </wvobject>
+         </wvobject>
+      </wvobject>
+      <wvobject fp_name="group419" type="group">
+         <obj_property name="label">CFG</obj_property>
+         <obj_property name="DisplayName">label</obj_property>
+         <wvobject fp_name="/tb/DUT/cf_mem0/clk" type="logic">
+            <obj_property name="ElementShortName">clk</obj_property>
+            <obj_property name="ObjectShortName">clk</obj_property>
+         </wvobject>
+         <wvobject fp_name="/tb/DUT/cf_mem0/rstn" type="logic">
+            <obj_property name="ElementShortName">rstn</obj_property>
+            <obj_property name="ObjectShortName">rstn</obj_property>
+         </wvobject>
+         <wvobject fp_name="/tb/DUT/cf_mem0/write" type="logic">
+            <obj_property name="ElementShortName">write</obj_property>
+            <obj_property name="ObjectShortName">write</obj_property>
+         </wvobject>
+         <wvobject fp_name="/tb/DUT/cf_mem0/data" type="array">
+            <obj_property name="ElementShortName">data[31:0]</obj_property>
+            <obj_property name="ObjectShortName">data[31:0]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/tb/DUT/cf_mem0/ready" type="logic">
+            <obj_property name="ElementShortName">ready</obj_property>
+            <obj_property name="ObjectShortName">ready</obj_property>
+         </wvobject>
+         <wvobject fp_name="/tb/DUT/cf_mem0/valid" type="logic">
+            <obj_property name="ElementShortName">valid</obj_property>
+            <obj_property name="ObjectShortName">valid</obj_property>
+         </wvobject>
+         <wvobject fp_name="/tb/DUT/cf_mem0/row_size" type="array">
+            <obj_property name="ElementShortName">row_size[5:0]</obj_property>
+            <obj_property name="ObjectShortName">row_size[5:0]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/tb/DUT/cf_mem0/no_of_rows" type="array">
+            <obj_property name="ElementShortName">no_of_rows[9:0]</obj_property>
+            <obj_property name="ObjectShortName">no_of_rows[9:0]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/tb/DUT/cf_mem0/k00" type="array">
+            <obj_property name="ElementShortName">k00[8:0]</obj_property>
+            <obj_property name="ObjectShortName">k00[8:0]</obj_property>
+            <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject fp_name="/tb/DUT/cf_mem0/k01" type="array">
+            <obj_property name="ElementShortName">k01[8:0]</obj_property>
+            <obj_property name="ObjectShortName">k01[8:0]</obj_property>
+            <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject fp_name="/tb/DUT/cf_mem0/k02" type="array">
+            <obj_property name="ElementShortName">k02[8:0]</obj_property>
+            <obj_property name="ObjectShortName">k02[8:0]</obj_property>
+            <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject fp_name="/tb/DUT/cf_mem0/k10" type="array">
+            <obj_property name="ElementShortName">k10[8:0]</obj_property>
+            <obj_property name="ObjectShortName">k10[8:0]</obj_property>
+            <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject fp_name="/tb/DUT/cf_mem0/k11" type="array">
+            <obj_property name="ElementShortName">k11[8:0]</obj_property>
+            <obj_property name="ObjectShortName">k11[8:0]</obj_property>
+            <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject fp_name="/tb/DUT/cf_mem0/k12" type="array">
+            <obj_property name="ElementShortName">k12[8:0]</obj_property>
+            <obj_property name="ObjectShortName">k12[8:0]</obj_property>
+            <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject fp_name="/tb/DUT/cf_mem0/k20" type="array">
+            <obj_property name="ElementShortName">k20[8:0]</obj_property>
+            <obj_property name="ObjectShortName">k20[8:0]</obj_property>
+            <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject fp_name="/tb/DUT/cf_mem0/k21" type="array">
+            <obj_property name="ElementShortName">k21[8:0]</obj_property>
+            <obj_property name="ObjectShortName">k21[8:0]</obj_property>
+            <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject fp_name="/tb/DUT/cf_mem0/k22" type="array">
+            <obj_property name="ElementShortName">k22[8:0]</obj_property>
+            <obj_property name="ObjectShortName">k22[8:0]</obj_property>
+            <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject fp_name="/tb/DUT/cf_mem0/cfg_full" type="logic">
+            <obj_property name="ElementShortName">cfg_full</obj_property>
+            <obj_property name="ObjectShortName">cfg_full</obj_property>
+         </wvobject>
+         <wvobject fp_name="/tb/DUT/cf_mem0/mptr" type="array">
+            <obj_property name="ElementShortName">mptr[2:0]</obj_property>
+            <obj_property name="ObjectShortName">mptr[2:0]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/tb/DUT/cf_mem0/cfg_mem" type="array">
+            <obj_property name="ElementShortName">cfg_mem[0:3][31:0]</obj_property>
+            <obj_property name="ObjectShortName">cfg_mem[0:3][31:0]</obj_property>
+         </wvobject>
+      </wvobject>
+   </wvobject>
+   <wvobject fp_name="group126" type="group">
+      <obj_property name="label">DUT OUTerface</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <wvobject fp_name="/tb/DUT/m00_axis_tvalid" type="logic">
+         <obj_property name="ElementShortName">m00_axis_tvalid</obj_property>
+         <obj_property name="ObjectShortName">m00_axis_tvalid</obj_property>
+      </wvobject>
+      <wvobject fp_name="/tb/DUT/m00_axis_tready" type="logic">
+         <obj_property name="ElementShortName">m00_axis_tready</obj_property>
+         <obj_property name="ObjectShortName">m00_axis_tready</obj_property>
+      </wvobject>
+      <wvobject fp_name="/tb/DUT/m00_axis_tdata" type="array">
+         <obj_property name="ElementShortName">m00_axis_tdata[31:0]</obj_property>
+         <obj_property name="ObjectShortName">m00_axis_tdata[31:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/tb/DUT/m00_axis_tlast" type="logic">
+         <obj_property name="ElementShortName">m00_axis_tlast</obj_property>
+         <obj_property name="ObjectShortName">m00_axis_tlast</obj_property>
+      </wvobject>
+   </wvobject>
+</wave_config>

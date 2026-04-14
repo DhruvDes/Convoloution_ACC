@@ -1,0 +1,18 @@
+verilog xil_defaultlib -i "../../../../../../../../AMDDesignTools/2025.2/Vivado/data/rsb/busdef" --include "D:/AMDDesignTools/2025.2/Vivado/data/xilinx_vip/include" --include "../../../../LoopBackFIFO.gen/sources_1/bd/loopBackFifoBD/ipshared/ec67/hdl" --include "../../../../LoopBackFIFO.gen/sources_1/bd/loopBackFifoBD/ipshared/9a25/hdl" \
+"../../../bd/loopBackFifoBD/ip/loopBackFifoBD_processing_system7_0_0/sim/loopBackFifoBD_processing_system7_0_0.v" \
+"../../../bd/loopBackFifoBD/ip/loopBackFifoBD_axi_mem_intercon_imp_auto_pc_0/sim/loopBackFifoBD_axi_mem_intercon_imp_auto_pc_0.v" \
+"../../../bd/loopBackFifoBD/ip/loopBackFifoBD_axi_mem_intercon_imp_auto_us_0/sim/loopBackFifoBD_axi_mem_intercon_imp_auto_us_0.v" \
+"../../../bd/loopBackFifoBD/ip/loopBackFifoBD_axi_mem_intercon_1_imp_auto_pc_0/sim/loopBackFifoBD_axi_mem_intercon_1_imp_auto_pc_0.v" \
+"../../../bd/loopBackFifoBD/ip/loopBackFifoBD_ps7_0_axi_periph_imp_auto_pc_0/sim/loopBackFifoBD_ps7_0_axi_periph_imp_auto_pc_0.v" \
+
+sv xil_defaultlib -i "../../../../../../../../AMDDesignTools/2025.2/Vivado/data/rsb/busdef" --include "D:/AMDDesignTools/2025.2/Vivado/data/xilinx_vip/include" --include "../../../../LoopBackFIFO.gen/sources_1/bd/loopBackFifoBD/ipshared/ec67/hdl" --include "../../../../LoopBackFIFO.gen/sources_1/bd/loopBackFifoBD/ipshared/9a25/hdl" \
+"../../../bd/loopBackFifoBD/ipshared/d30f/src/lpbk_tst.sv" \
+"../../../bd/loopBackFifoBD/ip/loopBackFifoBD_lpbk_tst_0_0/sim/loopBackFifoBD_lpbk_tst_0_0.sv" \
+
+verilog xil_defaultlib -i "../../../../../../../../AMDDesignTools/2025.2/Vivado/data/rsb/busdef" --include "D:/AMDDesignTools/2025.2/Vivado/data/xilinx_vip/include" --include "../../../../LoopBackFIFO.gen/sources_1/bd/loopBackFifoBD/ipshared/ec67/hdl" --include "../../../../LoopBackFIFO.gen/sources_1/bd/loopBackFifoBD/ipshared/9a25/hdl" \
+"../../../bd/loopBackFifoBD/sim/loopBackFifoBD.v" \
+
+verilog xil_defaultlib "glbl.v"
+
+# Do not sort compile order
+nosort
