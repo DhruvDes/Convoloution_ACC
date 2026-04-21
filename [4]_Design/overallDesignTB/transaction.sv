@@ -17,24 +17,22 @@ class trn extends uvm_sequence_item;
   rand logic signed [8:0] k21;
   rand logic signed [8:0] k22;
  
-  constraint dim_c {
-    soft rows % 2 == 0;
-    soft row_width % 2== 0;
-    row_width != 64;
-  }
+ constraint dim_c {
+  rows      inside { 16, 20, 24, 28, 32, 36, 40, 44, 48, 52, 56, 60 };
+  row_width inside { 16, 20, 24, 28, 32, 36, 40, 44, 48, 52, 56, 60 };
+}
  
-  // Data size must be rows*row_width + 1 (dummy byte at index 0)
+  // data[] must hold exactly rows*row_width pixels plus the dummy byte at [0]
   constraint data_size_c {
     soft data.size() == rows * row_width + 1;
   }
  
-  // Pixel count must be multiple of 4 for clean 32-bit packing
+  // Pixel count must be a multiple of 4 for clean 32-bit packing
   constraint align_c {
     soft (rows * row_width) % 4 == 0;
   }
- 
-
- 
+  
+  
   function new(string name = "trn");
     super.new(name);
   endfunction

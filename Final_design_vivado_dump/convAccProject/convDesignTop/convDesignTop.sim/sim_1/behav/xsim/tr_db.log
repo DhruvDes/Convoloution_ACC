@@ -1,5 +1,0 @@
-  CREATE_STREAM @0 {NAME:sq T:Transactions SCOPE:uvm_test_top.env.wagent.seqr STREAM:562}
-  CREATE_STREAM @0 {NAME:sq T:Transactions SCOPE:uvm_test_top.env.wagent.seqr STREAM:562}
-  CREATE_STREAM @0 {NAME:sq T:Transactions SCOPE:uvm_test_top.env.wagent.seqr STREAM:562}
-  CREATE_STREAM @0 {NAME:sq T:Transactions SCOPE:uvm_test_top.env.wagent.seqr STREAM:562}
-  CREATE_STREAM @0 {NAME:sq T:Transactions SCOPE:uvm_test_top.env.wagent.seqr STREAM:562}

@@ -12,9 +12,9 @@ module top();
 
   // Clock generation
   initial clk = 0;
-  always #5.5 clk = ~clk;
-
-  // Interface instance
+  always #7.692 clk = ~clk; 
+  
+   // Interface instance
   design_if vif(clk);
 
   // DUT connection (when ready)
