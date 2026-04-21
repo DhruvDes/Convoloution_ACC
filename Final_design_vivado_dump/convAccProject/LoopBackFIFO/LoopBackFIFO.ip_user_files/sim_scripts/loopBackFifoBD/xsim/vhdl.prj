@@ -1,6 +1,0 @@
-vhdl xil_defaultlib  \
-"../../../bd/loopBackFifoBD/ip/loopBackFifoBD_axi_dma_0/sim/loopBackFifoBD_axi_dma_0.vhd" \
-"../../../bd/loopBackFifoBD/ip/loopBackFifoBD_rst_ps7_0_100M_0/sim/loopBackFifoBD_rst_ps7_0_100M_0.vhd" \
-
-# Do not sort compile order
-nosort
