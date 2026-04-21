@@ -26,6 +26,7 @@ task run_phase(uvm_phase phase);
    
     seq_item_port.get_next_item(t);
 //    `uvm_info(get_type_name(), "Driver reaching write_cfg task", UVM_NONE)
+    vif.wdrvcb.s00_axis_tlast <= 1'b0;
     write_cfg(t);
     stream_matrix(t);
     seq_item_port.item_done();
@@ -33,60 +34,51 @@ task run_phase(uvm_phase phase);
 endtask
 
 task write_cfg(trn t);
-  logic [31:0] data [4];
-  int i = 0;
-//  t.print();
+  logic [31:0] data[4];
+  int i;
   data[0] = 32'({t.rows, t.row_width});
   data[1] = {2'b0, t.k02, t.k01, t.k00};
   data[2] = {2'b0, t.k12, t.k11, t.k10};
   data[3] = {2'b0, t.k22, t.k21, t.k20};
+
+  i = 0;
   vif.wdrvcb.s00_axis_tvalid <= 1'b0;
-    while(i < 4)begin
-        @(vif.wdrvcb);
-        if(vif.wdrvcb.s00_axis_tready)begin
-//          `uvm_info(get_type_name(), $sformatf("Driving cfg"), UVM_NONE)
-            vif.wdrvcb.s00_axis_tdata <= data[i];
-//            vif.wdrvcb.s00_axis_tlast <= (i == 3) ? 1 : 0;
-            vif.wdrvcb.s00_axis_tvalid <= 1;
-           
-            i++;
-        end else begin
-         
-        end
-end
-//   Deassert after all beats sent
-//  @(vif.wdrvcb);
-//  vif.wdrvcb.s00_axis_tvalid <= 1'b0;
+
+  while (i < 4) begin
+    @(vif.wdrvcb);
+    if (vif.wdrvcb.s00_axis_tready) begin
+      vif.wdrvcb.s00_axis_tdata  <= data[i];
+      vif.wdrvcb.s00_axis_tvalid <= 1;
+      i++;   // only advance when accepted
+    end else begin
+      vif.wdrvcb.s00_axis_tvalid <= 0;
+    end
+  end
 endtask
 
 
 
 task stream_matrix(trn t);
-
-foreach (t.packed_data[i]) begin
-
-  @(vif.wdrvcb);
-  if(vif.wdrvcb.s00_axis_tready)begin
-    `uvm_info(get_type_name(), $sformatf("Driving data"), UVM_HIGH)
-    vif.wdrvcb.s00_axis_tdata <= t.packed_data[i];
-    vif.wdrvcb.s00_axis_tlast <= (i == t.packed_data.size() - 1) ? 1 : 0;
-    vif.wdrvcb.s00_axis_tvalid <= 1;
-
-
+  int i;
+  i = 0;
+  while (i < t.packed_data.size()) begin
+    @(vif.wdrvcb);
+    if (vif.wdrvcb.s00_axis_tready) begin
+      `uvm_info(get_type_name(),
+                $sformatf("Driving data word[%0d]", i), UVM_HIGH)
+      vif.wdrvcb.s00_axis_tdata  <= t.packed_data[i];
+      vif.wdrvcb.s00_axis_tlast  <= (i == t.packed_data.size() - 1) ? 1 : 0;
+      vif.wdrvcb.s00_axis_tvalid <= 1;
+      i++;   // only advance when handshake succeeded
     end else begin
-
+      vif.wdrvcb.s00_axis_tvalid <= 0;  // backpressure: deassert and wait
+    end
   end
-
-
-end
+  // Deassert after last beat is accepted
   @(vif.wdrvcb);
   vif.wdrvcb.s00_axis_tvalid <= 1'b0;
-  vif.wdrvcb.s00_axis_tlast <= 1'b0;
-
-
-
+  vif.wdrvcb.s00_axis_tlast  <= 1'b0;
 endtask
-
 
 
 
