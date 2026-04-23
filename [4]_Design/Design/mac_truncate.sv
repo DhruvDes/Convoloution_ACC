@@ -129,6 +129,8 @@ module mac_truncate #(
     if (!arstn) begin
       valid_s1 <= 1'b0;
       valid_s2 <= 1'b0;
+      valid_s3 <= 1'b0;
+      valid_s4 <= 1'b0;
     end else begin
       valid_s1 <= valid_in;  // aligns with stage 1 (input regs)
       valid_s2 <= valid_s1;  // aligns with stage 2 (result reg)
