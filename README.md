@@ -1,4 +1,6 @@
 # Convolution Accelerator for PYNQ-Z2
+A 3×3 kernel 2D convolution accelerator targeting the Zynq-7000.
+Streams pixels via AXI4-Stream, achieves 1 image/~8ms on supported inputs.
 
 ## Team members  
 - Dhruv Deshmukh(dad10090)
@@ -68,8 +70,7 @@ In detail requirements of the design is provided in; **design_req.md** -->
 
 
 
-A 3×3 kernel 2D convolution accelerator targeting the Zynq-7000.
-Streams pixels via AXI4-Stream, achieves [X] images/sec on MNIST-sized inputs.
+
 
 ## Documentation
 | Topic | File |
@@ -83,7 +84,7 @@ Streams pixels via AXI4-Stream, achieves [X] images/sec on MNIST-sized inputs.
 | How to reproduce | [docs/07_build_instructions.md](docs/07_build_instructions.md) |
 
 ## Headline Results
-- **Throughput:** [X] images/sec on PYNQ-Z2 @ 125 MHz
+- **Throughput:** 1 image /~8ms on PYNQ-Z2 @ 125 MHz
 - **Speedup vs ARM:** [26.63]× on the benchmark
 - **Resource use:** [17%], [5%], [6%] of xc7z020clg400-1
 - **Functional accuracy:** [1458880]/[1458880] images match scipy.signal.convolve2d reference
