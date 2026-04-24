@@ -19,7 +19,7 @@ Setup: PYNQ-Z2, xc7z020clg400-1, PL clock 125 MHz, AXI DMA on the same 125 MHz d
 | Metric | CPU (scipy on Arm) | FPGA | Ratio |
 |---|---:|---:|---:|
 | Mean latency | 5.913 ms | 0.820 ms | **7.21×** |
-| Min latency | 0.279 ms | 0.785 ms | — |
+| Min latency | 0.279 ms | 0.785 ms | 0.35x(loss due to DMA overhead) |
 | Max latency | 27.226 ms | 4.367 ms | 6.23× |
 | Total (20,000 frames) | 118.25 s | 16.40 s | 7.21× |
 
@@ -28,7 +28,7 @@ Setup: PYNQ-Z2, xc7z020clg400-1, PL clock 125 MHz, AXI DMA on the same 125 MHz d
 | Metric | CPU (scipy on Arm) | FPGA | Ratio |
 |---|---:|---:|---:|
 | Mean latency | 29.730 ms | 1.116 ms | **26.63×** |
-| Min latency | 0.792 ms | 0.806 ms | — |
+| Min latency | 0.792 ms | 0.806 ms | 0.98x(loss due to DMA overhead) |
 | Max latency | 2183.722 ms | 120.546 ms | 18.12× |
 | Total (20,000 frames) | 594.61 s | 22.33 s | 26.63× |
 
@@ -78,15 +78,17 @@ The initial motivation (documented in the top-level README and `docs/01_operatio
 
 ## Timing — Post-Implementation
 
-> **Note:** Replace with actuals from `synth/reports/timing_summary.rpt`.
+<!-- **Note:** Replace with actuals from `synth/reports/timing_summary.rpt`.-->
 
-| Metric | Target | Achieved |
+<!--| Metric | Target | Achieved |
 |---|---:|---:|
 | Clock period | 8.000 ns (125 MHz) | _[fill: Requirement column]_ |
 | Worst Negative Slack (WNS) | ≥ 0 ns | _[fill: WNS]_ |
 | Worst Hold Slack (WHS) | ≥ 0 ns | _[fill: WHS]_ |
 | Total Negative Slack (TNS) | 0 ns | 0 ns (timing met) |
-| Total Hold Slack (THS) | 0 ns | 0 ns |
+| Total Hold Slack (THS) | 0 ns | 0 ns |-->
+![clock_info](https://github.com/DhruvDes/Convoloution_ACC/blob/main/docs/images/impl/clock_proof_125Mhz.png)
+![Timing_info](https://github.com/DhruvDes/Convoloution_ACC/blob/main/docs/images/impl/timing_summary.png)
 
 A positive WNS is the gate for "timing closed at 125 MHz". The fact that the deployed bitstream runs correctly under 40,000 frames of sustained DMA activity (see `docs/05_verification.md`) is the functional confirmation that timing did in fact close.
 
