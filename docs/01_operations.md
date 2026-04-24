@@ -2,7 +2,7 @@
 
 ## Role
 
-`convAcc` is a streaming 2-D convolution accelerator for the Xilinx Zynq-7000 (PYNQ-Z2). It offloads 3×3 kernel convolutions on 8-bit grayscale images from the Arm Cortex-A9 PS, exchanging data with the PS over AXI4-Stream via AXI DMA. The IP runs at **125 MHz** on the xc7z020 and is stateless between frames, deterministic, and dimensioned so that the MAC datapath keeps pace with the AXI-Stream input rate (one output pixel per clock once the pipeline is primed).
+`convAcc` is a streaming 2-D convolution accelerator for the Xilinx Zynq-7000 (PYNQ-Z2). It offloads 3×3 kernel convolutions on 8-bit grayscale images from the Arm Cortex-A9 PS, exchanging data with the PS over AXI4-Stream via AXI DMA. The IP runs at **125 MHz** on the xc7z020clg400-1 and is stateless between frames, deterministic, and dimensioned so that the MAC datapath keeps pace with the AXI-Stream input rate (one output pixel per clock once the pipeline is primed).
 
 ## Mathematical Operation
 
@@ -18,8 +18,8 @@ Per output pixel this is **9 multiplications and 8 additions**. The result is th
 |---|---|---|---|
 | Input pixel `I(i,j)` | unsigned | 8 bits | `[0, 255]` |
 | Kernel coefficient `K(m,n)` | signed (two's complement) | 9 bits | `[−256, +255]` |
-| Product `p·k` | signed | 18 bits | — |
-| Accumulator | signed | 22 bits | — |
+| Product `p·k` | signed | 18 bits | `[-131072, 131071]` |
+| Accumulator | signed | 22 bits | `[-2097152, 2097151]` |
 | Output pixel `S(i,j)` | unsigned, saturated | 8 bits | `[0, 255]` |
 
 Saturation is implemented in `mac_truncate.sv`: negative sums clamp to `0`, sums greater than `255` clamp to `255`, otherwise the lower 8 bits are emitted.
@@ -28,12 +28,12 @@ Saturation is implemented in `mac_truncate.sv`: negative sums clamp to `0`, sums
 
 The IP is parameterized but the synthesized line buffer constrains the practical working set:
 
-- **Row width (`row_size`)**: 6-bit field → up to 63 pixels per row. Benchmarks used `W = 16` and `W = 60`.
+- **Row width (`row_size`)**: 6-bit field → up to 60 pixels per row where width %4 == 0. Benchmarks used `W = 16` and `W = 60`.
 - **Number of rows (`no_of_rows`)**: 10-bit field → up to 1023 rows per frame.
 - **Minimum frame size**: 3 × 3 (one output pixel).
 - **Line-buffer storage**: 4 lanes × 64 pixels × 8 bits = 2048 flip-flops (four rows of the frame are kept on-chip at any time to feed the sliding 3×3 window while the next row is being written).
 
-Frames larger than the compile-time `row_size` require re-parameterization and re-synthesis; frames that fit this range are supported at runtime by writing the dimensions into the config registers at the start of each frame.
+<!-- Frames larger than the compile-time `row_size` require re-parameterization and re-synthesis; frames that fit this range are supported at runtime by writing the dimensions into the config registers at the start of each frame. -->
 
 ## Edge / Boundary Handling
 

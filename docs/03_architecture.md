@@ -50,7 +50,7 @@ PS (DMA MM2S) ──────────────────────
 ``` -->
 ![Alt text](https://github.com/DhruvDes/Convoloution_ACC/blob/main/docs/images/arch/top_block_diagram.png)
 
-Block diagram source: `docs/images/arch/top_block_diagram.png`.
+Block diagram source: `https://github.com/DhruvDes/Convoloution_ACC/blob/main/docs/images/arch/top_block_diagram.png`.
 
 ## Partitioning Rationale
 
@@ -70,7 +70,7 @@ This keeps the BUI's FIFO backpressure logic away from the DSP timing path, whic
 - Implements a 4-state frame FSM: `Cleanup → Idle → Operational → preCleanup → Cleanup`.
 - Generates `softReset` between frames so the BUI FIFOs survive but the per-frame counters do not.
 - Drives `mainToLbIdx` (column index into the line buffer) and `mainToLbRowDone` (row-boundary pulse) that together walk the 3×3 window across the stored rows.
-- Hosts the output byte packer: four 8-bit MAC results are shifted into a 32-bit register; on the 4th valid result a word is emitted; at frame end (`preCleanup`, `preCleanupCnt == 3`) a partial word is padded with zeros and emitted with `TLAST`.
+- Hosts the output byte packer: four 8-bit MAC results are shifted into a 32-bit register; on the 4th valid result a word is emitted; at frame end (`preCleanup`, `preCleanupCnt == 3`) a partial word is padded with zeros and emitted with `TLAST` signal to the BUI indicating its the last of the frame.
 
 ### `busInterfaceUnit.sv` (BUI) — AXI-Stream plumbing
 
@@ -78,7 +78,7 @@ This keeps the BUI's FIFO backpressure logic away from the DSP timing path, whic
 - Contains the **config/pixel demultiplexer**: a `txn_cnt` counts the first `CFG_PKTS = 4` reads and routes them to `cf_mem`, after which all remaining reads are routed to the line buffer.
 - Handles the 1-cycle BRAM read latency of the input FIFO with an `rd_pending` shadow register so `M_PX_TVALID` can rise one cycle earlier than the trivial two-stage pipeline would allow.
 - Emits a single-cycle `frame_start` pulse the cycle the first pixel appears on `M_PX_*`, which kicks the line buffer into `LDARR`.
-- Applies `stop_input` (from `tlast_received`) to stall writes into the input FIFO after the last pixel of a frame, so the BUI cannot swallow the next frame's header before the current one finishes.
+- Applies `stop_input` (from `tlast_received`) to stall writes into the input FIFO after the last pixel of a frame, so the BUI cannot swallow the next frame's header before the current one finishes. This allows the DMA to do back to back transfers from its point of view but the design correctly accepts one frame per computation. 
 
 ### `cf_mem.sv` — configuration register file
 
@@ -120,3 +120,9 @@ Total latency from the first valid pixel entering `line_buffer` to the first val
 - Result FIFO: 1 cycle
 
 Steady-state throughput is **1 output pixel per cycle**. At the post-implementation 125 MHz clock this corresponds to a theoretical peak of 125 megapixels per second, which matches the measured performance reported in `06_results.md`.
+
+### Transaction Example
+
+![Alt text](https://github.com/DhruvDes/Convoloution_ACC/blob/main/docs/images/sim/waveform_axi_handshake.png)
+
+here is an example of a `width` = 36 and `height` = 24 image. where the transaction is started at `45ns` and first valid output is at `644ns` followed by `6596ns` when Tlast is asserted ending the frame. Totalling `6551ns` for this transfer.

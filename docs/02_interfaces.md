@@ -1,6 +1,6 @@
 # 02 — Interfaces
 
-The IP presents two AXI4-Stream interfaces to the rest of the system: one slave for the inbound configuration + pixel stream, and one master for the outbound result stream. There is no AXI-Lite control port — configuration is sent as the first four words of each frame on the same AXI-Stream channel as the pixels. This keeps the PS-side driver simple (one DMA send, one DMA receive) and eliminates cross-clock AXI-Lite stalls in the inner benchmark loop.
+The IP presents two AXI4-Stream interfaces to the rest of the system: one slave for the inbound configuration + pixel stream, and one master for the outbound result stream. There is no AXI-Lite control port — configuration is sent as the first four words of each frame on the same AXI-Stream channel as the pixels making it faster to use acclerator. This keeps the PS-side driver simple (one DMA send, one DMA receive) and eliminates cross-clock AXI-Lite stalls in the inner benchmark loop.
 
 ## Top-Level Port List (`convAcc.sv`)
 
@@ -19,7 +19,7 @@ The IP presents two AXI4-Stream interfaces to the rest of the system: one slave 
 
 Handshake follows the AXI4-Stream rules: transfer occurs on the rising edge when both `TVALID` and `TREADY` are high. `TVALID` never depends combinationally on `TREADY`.
 
-## Inbound Frame Format (Slave — PS → IP)
+## Inbound Frame Format (Slave PS to IP)
 
 Every frame is four header words followed by `ceil(H·W / 4)` pixel words. Fields are listed LSB-first.
 
@@ -62,7 +62,7 @@ Result pixels are packed identically to the input: four 8-bit pixels per 32-bit 
 
 ## Internal Handshakes (for reference)
 
-Within the IP, the same valid/ready discipline is used at every module boundary:
+Within the IP, the same valid/ready discipline is used at module boundary to enable backpressure:
 
 | Producer → Consumer | Data | Notes |
 |---|---|---|
@@ -79,7 +79,7 @@ Within the IP, the same valid/ready discipline is used at every module boundary:
 There are two reset domains:
 
 - **Hard reset** (`axis_aresetn = 0`): clears the top-level FSM, empties FIFOs, and returns the IP to `Cleanup`. Required once at power-on.
-- **Soft reset** (`softReset`, internal): asserted by the top-level FSM between frames to clear per-frame state (config counter, row counters, write pointer, pixel packer) without touching the AXI-Stream FIFO interfaces. This is what allows the PS to send 20,000 frames back-to-back without PL-side intervention.
+- **Soft reset** (`softReset`, internal): asserted by the top-level FSM between frames to clear state and pointers per frame memory is not touched(config counter, row counters, write pointer, pixel packer) without touching the AXI-Stream FIFO interfaces. This is what allows the PS to send 20,000 frames back-to-back without PL-side intervention.
 
 ## PS-Side Software Contract
 
@@ -98,4 +98,4 @@ dma.recvchannel.wait()
 result = recv_buf.view(np.uint8)[:(H-2)*(W-2)].reshape(H-2, W-2)
 ```
 
-The `sendchannel.transfer` call carries everything the IP needs — dimensions, kernel, and pixels — in a single DMA descriptor, which is why the measured per-frame overhead is dominated by DMA setup rather than AXI-Lite register writes.
+The `sendchannel.transfer` call carries everything the IP needs — dimensions, kernel, and pixels — in a single DMA descriptor, which is why the measured per-frame overhead is dominated by DMA setup. This is negligible when the image sizes are increased.
