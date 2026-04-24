@@ -128,8 +128,8 @@ See `docs/06_results.md` for the full tables and analysis against the original p
 
 | File | What it shows |
 |---|---|
-| `sw/Benchmark_Arm_and_Acclerator_after_implimentation.ipynb` | Full on-board methodology, source, cell outputs |
-| `docs/images/benchmarks/fpga_vs_cpu_latency.png` | Scatter + binned-mean latency vs image height, log scale, both tests |
+| `sw/TestBench_conv2d_HW.ipynb` | Full on-board methodology, source, cell outputs |
+| `sw/results/fpga_vs_cpu_latency.png` | Scatter + binned-mean latency vs image height, log scale, both tests |
 | `sw/results/testbench_log.txt` | The logs copided form the HW in loop testbench for independent viewing|
 
 #### Summary of HW-SW verification
@@ -145,15 +145,15 @@ Close to an 1hr long continious run verification.
 
 | Concern | UVM sim | On-board notebook |
 |---|---|---|
-| MAC arithmetic is correct | ✓ | ✓ |
-| Kernel orientation is convolution (not correlation) | ✓ | ✓ |
-| Saturation clamps at 0 / 255 | ✓ | ✓ |
-| Row-done + base-lane rotation is correct | ✓ | ✓ (indirectly, via multi-row frames) |
-| Result packer handles tail padding correctly | ✓ | ✓ |
-| Back-to-back frames don't bleed state | implicit (coverage loop reuses DUT) | ✓ explicit (20k frames per test) |
-| Packaged IP + block design are correct | — | ✓ |
-| DMA driver round-trip is correct | — | ✓ |
-| Timing closure at 125 MHz holds under sustained load | — | ✓ |
-| Behaviour at heights > 60 (beyond trained coverage) | — | ✓ |
+| MAC arithmetic is correct | `yes` | `yes` |
+| Kernel orientation is convolution (not correlation) | `yes` | `yes` |
+| Saturation clamps at 0 / 255 | `yes` | `yes` |
+| Row-done + base-lane rotation is correct | `yes` | `yes` |
+| Result packer handles tail padding correctly | `yes` | `yes` |
+| Back-to-back frames don't bleed state | `yes` implicit (coverage loop reuses DUT) | `yes` explicit (20k frames per test) |
+| Packaged IP + block design are correct | cannot test in sim due to hidden wrapper files | `yes` |
+| DMA driver round-trip is correct | can only be tested on implimentation | `yes` |
+| Timing closure at 125 MHz holds under sustained load | `yes`(post synthesis) | `yes` |
+| Behaviour at heights > 60 (beyond trained coverage) | Goal in sim was atleast 60x60 due to time required for coverage  | `yes` |
 
 Passing both layers independently is the argument that the IP works.
