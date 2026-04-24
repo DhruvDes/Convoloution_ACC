@@ -74,26 +74,26 @@ Write and read transactions don't arrive at the scoreboard in the same order —
 
 The read driver applies randomized `m00_axis_tready` deassertions so the DUT's backpressure path through the result FIFO and the byte packer is exercised, not just the zero-stall ideal case.
 
-### Clocking
+<!-- ### Clocking
 
-The simulation clock period is `15.384 ns` (≈ 65 MHz), generated in `top.sv`. This is deliberately slower than the synthesized 125 MHz so simulator-visible race conditions around the clocking-block `#1` delays in `design_if` don't mask bugs that would be benign at target frequency. The four clocking blocks (`wdrvcb`, `wmoncb`, `rdrvcb`, `rmoncb`) use `default input #1 output #1` so drivers sample and drive one time-unit off the clock edge — this is the standard idiom to avoid races between monitors and drivers on the same interface.
+The simulation clock period is `8 ns` (≈ 125 MHz), generated in `top.sv`. This is deliberately slower than the synthesized 125 MHz so simulator-visible race conditions around the clocking-block `#1` delays in `design_if` don't mask bugs that would be benign at target frequency. The four clocking blocks (`wdrvcb`, `wmoncb`, `rdrvcb`, `rmoncb`) use `default input #1 output #1` so drivers sample and drive one time-unit off the clock edge — this is the standard idiom to avoid races between monitors and drivers on the same interface. -->
 
-### How to run
+<!-- ### How to run
 
 ```bash
 cd sim
 ./run_sim.sh                        # xsim, default
 ./run_sim.sh --gui                  # open waveform viewer
-```
+``` -->
 
-The script compiles the RTL (`rtl/*.sv`), the TB (`tb/*.sv`), and the packaged `Interface.sv`, elaborates `top`, and runs to completion. A passing run prints `MATRIX SIZE COVERAGE: 100.00% (12 / 12 sizes hit)` and zero `UVM_ERROR` counts; the log is archived to `sim/reports/sim_log.txt`.
+<!-- The script compiles the RTL (`rtl/*.sv`), the TB (`tb/*.sv`), and the packaged `Interface.sv`, elaborates `top`, and runs to completion. A passing run prints `MATRIX SIZE COVERAGE: 100.00% (12 / 12 sizes hit)` and zero `UVM_ERROR` counts; the log is archived to `sim/reports/sim_log.txt`. -->
 
 ### Committed evidence
 
 | File | What it shows |
 |---|---|
 | `docs/images/sim/uvm_pass_summary.png` | End-of-run UVM report: 0 errors, 100% coverage |
-| `docs/images/sim/waveform_axi_handshake.png` | Input-side `TVALID`/`TREADY`/`TDATA`/`TLAST` over several frames |
+| `docs/images/sim/waveform_axi_handshake_multi.png` | Input-side `TVALID`/`TREADY`/`TDATA`/`TLAST` over several frames |
 | `docs/images/sim/waveform_first_output.png` | First output word emerging after the pipeline fills |
 | `sim/reports/sim_log.txt` | Full simulator transcript including coverage checkpoints |
 
@@ -130,7 +130,16 @@ See `docs/06_results.md` for the full tables and analysis against the original p
 |---|---|
 | `sw/Benchmark_Arm_and_Acclerator_after_implimentation.ipynb` | Full on-board methodology, source, cell outputs |
 | `docs/images/benchmarks/fpga_vs_cpu_latency.png` | Scatter + binned-mean latency vs image height, log scale, both tests |
-| `sw/results/timing_summary.txt` | The summary tables copied out of the notebook for standalone reading |
+| `sw/results/testbench_log.txt` | The logs copided form the HW in loop testbench for independent viewing|
+
+#### Summary of HW-SW verification
+Close to an 1hr long continious run verification.
+======================================================================
+ Result  : PASS
+ Passed  : 1458880/1458880
+ Time    : 4206.86s  (2.9 ms/test)
+ Details : testbench_log.txt
+======================================================================
 
 ## What Each Layer Proves
 

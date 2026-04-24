@@ -12,7 +12,7 @@ module top();
 
   // Clock generation
   initial clk = 0;
-  always #7.692 clk = ~clk; 
+  always #4 clk = ~clk; 
   
    // Interface instance
   design_if vif(clk);
