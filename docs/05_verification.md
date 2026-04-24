@@ -134,13 +134,14 @@ See `docs/06_results.md` for the full tables and analysis against the original p
 
 #### Summary of HW-SW verification
 Close to an 1hr long continious run verification.
+```
 ======================================================================
  Result  : PASS
  Passed  : 1458880/1458880
  Time    : 4206.86s  (2.9 ms/test)
  Details : testbench_log.txt
 ======================================================================
-
+```
 ## What Each Layer Proves
 
 | Concern | UVM sim | On-board notebook |
