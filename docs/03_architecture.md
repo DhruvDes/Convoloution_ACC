@@ -48,7 +48,7 @@ PS (DMA MM2S) ──────────────────────
                               AXI-Stream (32b + TLAST)
                                  → PS (DMA S2MM)
 ``` -->
-![Alt text](docs/images/arch/top_block_diagram.png)
+![Alt text](https://github.com/DhruvDes/Convoloution_ACC/blob/main/docs/images/arch/top_block_diagram.png)
 
 Block diagram source: `docs/images/arch/top_block_diagram.png`.
 
