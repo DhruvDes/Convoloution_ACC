@@ -8,7 +8,9 @@ Verification was done in two independent layers: a UVM simulation testbench that
 
 Standard UVM layering, instantiated from `top.sv`:
 
-```
+![Alt text](https://github.com/DhruvDes/Convoloution_ACC/blob/main/docs/images/sim/uvm_testbench.png)
+
+<!-- ```
                  ┌────────────────────────────────────────┐
                  │               test (uvm_test)          │
                  │     coverage-driven loop up to 500 txns│
@@ -32,7 +34,7 @@ Standard UVM layering, instantiated from `top.sv`:
                          ┌────────▼────────┐
                          │  DUT: convAcc   │
                          └─────────────────┘
-```
+``` -->
 
 | Component | File | Role |
 |---|---|---|

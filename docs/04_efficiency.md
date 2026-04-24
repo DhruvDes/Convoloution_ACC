@@ -82,4 +82,4 @@ With on-stream config, the PS writes the four words directly into the DMA buffer
 | On-stream config | 4 header words per frame | Eliminates ~80,000 AXI-Lite writes over a 20k-frame benchmark |
 | One-hot FSM | ~4 extra FFs | Next-state logic off the critical path |
 
-The effect of all of these together is visible in `06_results.md`: 7.2× speedup over `scipy.signal.convolve2d` on the Arm Cortex-A9 for 16-wide images (where DMA overhead is most exposed), and 26.6× speedup for 60-wide images (where steady-state compute dominates).
+The effect of all of these together is visible in `06_results.md`: 7.2× speedup over `scipy.signal.convolve2d` on the Arm Cortex-A9 for 16-wide and height greater than 30, images (where DMA overhead is most exposed), and 26.6× speedup for 60-wide images (where steady-state compute dominates).
