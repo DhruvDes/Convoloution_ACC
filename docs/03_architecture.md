@@ -2,7 +2,7 @@
 
 ## Block Diagram
 
-```
+<!-- ```
               AXI-Stream (32b + TLAST)
 PS (DMA MM2S) ────────────────────────────┐
                                           ▼
@@ -47,7 +47,8 @@ PS (DMA MM2S) ──────────────────────
                                           ▼
                               AXI-Stream (32b + TLAST)
                                  → PS (DMA S2MM)
-```
+``` -->
+![Alt text](docs/images/arch/top_block_diagram.png)
 
 Block diagram source: `docs/images/arch/top_block_diagram.png`.
 
