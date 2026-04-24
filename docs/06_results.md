@@ -50,8 +50,6 @@ The initial motivation (documented in the top-level README and `docs/01_operatio
 
 ## Resource Utilization — Post-Implementation
 
-> **Note:** The numbers in this section are placeholders pending a clean rebuild. Replace each value with the actual figure from `synth/reports/utilization.rpt` before final submission. Target device is the xc7z020clg400-1 on the PYNQ-Z2.
-
 ### Full design (including AXI DMA and interconnect)
 ![full_design_util](https://github.com/DhruvDes/Convoloution_ACC/blob/main/docs/images/impl/utilization_summary.png)
 <!--| Resource | Used | Available | Utilization |
