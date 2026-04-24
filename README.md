@@ -1,14 +1,11 @@
-# Convoloution Acc For ZYNQ 
-
-## GitHub repo provided 
-- https://github.com/DhruvDes/Convoloution_ACC
+# Convolution Accelerator for PYNQ-Z2
 
 ## Team members  
 - Dhruv Deshmukh(dad10090)
 - Faiza Zahin Tasfia(ft2335)
 - Luka Kitamura (lk3283)
   
-## IP Description: Hardware Convolution Accelerator
+<!-- ## IP Description: Hardware Convolution Accelerator
 
 The intended functionality of this IP is to perform high-speed, deterministic 2-dimensional convolution operations on image data. Unlike a general-purpose CPU that executes instructions sequentially, this IP is a dedicated data-path designed to ingest pixel streams and apply a 3 × 3 filter kernel in a single pass. It is designed to offload the most mathematically expensive layer of convolutional from the host processor to a specialized hardware.
 
@@ -66,4 +63,32 @@ The motivation for this project is not just to be faster than ARM, but to use da
 ## IP architecture
 The overall high level architecture of the design is shown below.<br>
 <img width="960" height="540" alt="overall_design" src="https://github.com/user-attachments/assets/e26d2a51-3b23-477f-8925-64f3b7d72c3b" />
-In detail requirements of the design is provided in; **design_req.md**
+In detail requirements of the design is provided in; **design_req.md** -->
+![Imp_img](https://github.com/DhruvDes/Convoloution_ACC/blob/main/docs/images/impl/implimented_floorplan.png)
+
+
+
+A 3×3 kernel 2D convolution accelerator targeting the Zynq-7000.
+Streams pixels via AXI4-Stream, achieves [X] images/sec on MNIST-sized inputs.
+
+## Documentation
+| Topic | File |
+|---|---|
+| What it does (operations, math) | [docs/01_operations.md](docs/01_operations.md) |
+| Interfaces (AXI signals, register map) | [docs/02_interfaces.md](docs/02_interfaces.md) |
+| Architecture (block diagram, modules) | [docs/03_architecture.md](docs/03_architecture.md) |
+| Design efficiency (pipelining, reuse) | [docs/04_efficiency.md](docs/04_efficiency.md) |
+| Verification (sim + on-board) | [docs/05_verification.md](docs/05_verification.md) |
+| Results (utilization, timing, throughput) | [docs/06_results.md](docs/06_results.md) |
+| How to reproduce | [docs/07_build_instructions.md](docs/07_build_instructions.md) |
+
+## Headline Results
+- **Throughput:** [X] images/sec on PYNQ-Z2 @ 125 MHz
+- **Speedup vs ARM:** [26.63]× on the benchmark
+- **Resource use:** [17%], [5%], [6%] of xc7z020clg400-1
+- **Functional accuracy:** [1458880]/[1458880] images match scipy.signal.convolve2d reference
+
+<!-- ## Quick Start
+- Reproduce simulation: `cd sim && ./run_sim.sh`
+- Rebuild bitstream: `cd synth && vivado -mode batch -source build.tcl` -->
+- Run on board: open `sw/demo.ipynb` in PYNQ Jupyter
