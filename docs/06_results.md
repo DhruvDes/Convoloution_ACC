@@ -53,28 +53,28 @@ The initial motivation (documented in the top-level README and `docs/01_operatio
 > **Note:** The numbers in this section are placeholders pending a clean rebuild. Replace each value with the actual figure from `synth/reports/utilization.rpt` before final submission. Target device is the xc7z020clg400-1 on the PYNQ-Z2.
 
 ### Full design (including AXI DMA and interconnect)
-
-| Resource | Used | Available | Utilization |
+![full_design_util](https://github.com/DhruvDes/Convoloution_ACC/blob/main/docs/images/impl/utilization_summary.png)
+<!--| Resource | Used | Available | Utilization |
 |---|---:|---:|---:|
 | LUT | _[fill from report]_ | 53,200 | _[%]_ |
 | FF | _[fill from report]_ | 106,400 | _[%]_ |
 | BRAM (36K) | _[fill from report]_ | 140 | _[%]_ |
-| DSP48E1 | _[fill from report]_ | 220 | _[%]_ |
+| DSP48E1 | _[fill from report]_ | 220 | _[%]_ |-->
 
 ### `convAcc` IP alone (from hierarchical utilization)
-
-| Resource | convAcc | Of which mac_truncate | Of which lineBuffer | Of which BUI |
+![convAcc_only_util](https://github.com/DhruvDes/Convoloution_ACC/blob/main/docs/images/impl/utilization_sum_conv_only.png)
+<!--| Resource | convAcc | Of which mac_truncate | Of which lineBuffer | Of which BUI |
 |---|---:|---:|---:|---:|
 | LUT | _[fill]_ | _[fill]_ | _[fill]_ | _[fill]_ |
 | FF | _[fill]_ | _[fill]_ | _[fill]_ | _[fill]_ |
 | BRAM | _[fill]_ | 0 | 0 | _[fill]_ |
-| DSP48E1 | 9 | 9 | 0 | 0 |
+| DSP48E1 | 9 | 9 | 0 | 0 |-->
 
-**What to look for when filling this in:**
+<!--*What to look for when filling this in:**
 
 - `mac_truncate` should report exactly **9 DSP48E1** slices (one per multiplier, matching the `(* use_dsp = "yes" *)` directive). If it says more or fewer, the synthesizer is doing something unexpected.
 - `lineBuffer` should have ~2048 FFs for the 4-lane × 64 × 8-bit storage array. If BRAM is non-zero here, Vivado inferred BRAM instead of distributed RAM — this is fine but changes the timing story.
-- `busInterfaceUnit` should be BRAM-dominated (input FIFO = 512 × 33 bits = 1 BRAM36; result FIFO = 256 × 33 = 1 BRAM18 or shared) with modest LUT/FF for the demux and handshake logic.
+- `busInterfaceUnit` should be BRAM-dominated (input FIFO = 512 × 33 bits = 1 BRAM36; result FIFO = 256 × 33 = 1 BRAM18 or shared) with modest LUT/FF for the demux and handshake logic. -->
 
 ## Timing — Post-Implementation
 
@@ -95,11 +95,11 @@ A positive WNS is the gate for "timing closed at 125 MHz". The fact that the dep
 ## Functional Correctness
 
 ### Simulation
-
-- **UVM matrix-size coverage:** 100% (12 of 12 supported sizes exercised with randomized kernels and pixel data) — see `sim/reports/sim_log.txt`.
+![Uvm_tb_results](https://github.com/DhruvDes/Convoloution_ACC/blob/main/docs/images/sim/testbench_pass_log.png)
+- **UVM matrix-size coverage:** 100% (12 of 12 supported sizes exercised with randomized kernels and pixel data)
 - **UVM errors:** 0.
-- **Transactions executed to close coverage:** see the checkpoint entries in `sim/reports/sim_log.txt` (`Coverage >= 20% after … transactions`).
-
+- **Transactions executed to close coverage:** see the checkpoint entries
+  
 ### On-board hardware-in-the-loop
 
 - **Frames verified:** 40,000 (20k in Test A + 20k in Test B).
@@ -108,23 +108,21 @@ A positive WNS is the gate for "timing closed at 125 MHz". The fact that the dep
 
 ## Power (optional, if generated)
 
-If `report_power` was run, fill in from `synth/reports/power.rpt`:
-
 | Domain | Power |
 |---|---:|
-| Dynamic | _[fill]_ W |
-| Static | _[fill]_ W |
-| **Total on-chip** | _[fill]_ W |
+| Dynamic | _1.317_W |
+| Static | _0.136_ W |
+| **Total on-chip** | _1.454_ W |
 
 ## Analysis Against Goals
 
 | Goal | Met? | Notes |
 |---|---|---|
-| 3×3 convolution on Zynq-7000 PYNQ-Z2 | ✓ | Packaged IP + overlay + driver all working |
-| 125 MHz PL clock | ✓ | Timing closed at 8 ns period; sustained-load functional confirmation across 40,000 frames |
-| Faster than Arm scipy baseline | ✓✓ | 7.2× at W=16, 26.6× at W=60 |
-| Functional correctness | ✓ | UVM sim + on-board golden-model comparison across 40,000 frames |
-| Streaming, one pixel/cycle steady state | ✓ | Latency scales linearly with H·W above the DMA-overhead regime |
-| Supports a practical range of MNIST-to-small-image sizes | ✓ | 12 sizes in {16 … 60} verified in sim; on-board tests go up to height 1000 |
+| 3×3 convolution on Zynq-7000 PYNQ-Z2 | `yes` | Packaged IP + overlay + driver all working |
+| 125 MHz PL clock | `yes` | Timing closed at 8 ns period; sustained-load functional confirmation across 40,000 frames |
+| Faster than Arm scipy baseline | `yes`, `yes` | 7.2× at W=16, 26.6× at W=60 |
+| Functional correctness | `yes` | UVM sim + on-board golden-model comparison across 40,000 frames |
+| Streaming, one pixel/cycle steady state | `yes` | Latency scales linearly with H·W above the DMA-overhead regime |
+| Supports a practical range of MNIST-to-small-image sizes | `yes` | 12 sizes in {16 … 60} verified in sim; on-board tests go up to height 1000 |
 
 The initial stretch goal of "handle larger colour images" remains open — the current design is single-channel 8-bit. Extending to RGB would require either three parallel `convAcc` instances (linear DSP/BRAM cost) or time-multiplexing the existing MAC across channels (roughly one-third the throughput, same resource budget).
