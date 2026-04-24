@@ -34,7 +34,7 @@ Setup: PYNQ-Z2, xc7z020clg400-1, PL clock 125 MHz, AXI DMA on the same 125 MHz d
 
 ### What the numbers mean
 
-![Latency vs image height — CPU vs FPGA](images/benchmarks/fpga_vs_cpu_latency.png)
+![Latency vs image height — CPU vs FPGA](https://github.com/DhruvDes/Convoloution_ACC/blob/main/sw/Results/fpga_vs_cpu_latency.png)
 
 The plot (Test A left, Test B right, both log-scale y-axis) makes the two regimes visible:
 
