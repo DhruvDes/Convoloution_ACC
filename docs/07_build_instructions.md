@@ -1,6 +1,7 @@
 # 07 — Build Instructions
 
-This document covers three reproducible flows: running the UVM simulation, rebuilding the Vivado project and bitstream, and running the IP on the PYNQ-Z2 board. Each flow is automated to the extent that is practical without redistributing Xilinx tools.
+This document covers three reproducible flows: running the UVM simulation, rebuilding the Vivado project and bitstream, and running the IP on the PYNQ-Z2 board. Each flow is automated to the extent that is practical using Vivado shell.
+Look at `doc/sw/demo`  for a devicedemo.ipynb if only inserted in running it on the device. All the necessary files and instructions are provided there. Do upload the `sw` folder on to your jupyter notebook directory
 
 ## Prerequisites
 
