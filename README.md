@@ -89,7 +89,7 @@ In detail requirements of the design is provided in; **design_req.md** -->
 - **Resource use:** [17%], [5%], [6%] of xc7z020clg400-1
 - **Functional accuracy:** [1458880]/[1458880] images match scipy.signal.convolve2d reference
 
-<!-- ## Quick Start
-- Reproduce simulation: `cd sim && ./run_sim.sh`
-- Rebuild bitstream: `cd synth && vivado -mode batch -source build.tcl` -->
-- Run on board: open `sw/demo.ipynb` in PYNQ Jupyter
+ ## Quick Start
+- Reproduce simulation and bitstream: run `vivado -mode batch -source run.tcl -notrace` in main directory
+- Cleanup after simulation and bitstream : `tlcsh cleanup.tcl`
+- Run on board: open `sw/Demo/DeviceDemo.ipynb` in PYNQ Jupyter
