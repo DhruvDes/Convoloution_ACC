@@ -14,7 +14,7 @@ Look at `doc/sw/demo`  for a devicedemo.ipynb if only interested in running a de
 
 No Xilinx-specific environment setup is required beyond sourcing `settings64.sh` (Linux) or running the Vivado command prompt (Windows) so `vivado` is on `PATH`.
 
-There are two methods of building: [manually](#manual-build-instructions), or by using the [tcl-build-script](#tcl-automatic-build-script-instructions---runtcl) 
+There are two methods of building: [manually](#manual-build-instructions), or by using the [tcl build script](#tcl-automatic-build-script-instructions---runtcl) which automates the manual build process.
 
 ## *Manual Build Instructions:*
 
