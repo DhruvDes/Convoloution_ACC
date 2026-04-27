@@ -148,25 +148,30 @@ vivado -mode batch -source run.tcl -notrace
 The -notrace flag suppresses command echoing for cleaner output.
 
 ### 2. Copy the overlay files
-After running the tcl file, the ```.bit``` and ```.hmh``` files will be located in a new directory called `/OverlayFiles`
-Save these files somewhere outside of `/OverlayFiles` such that they can be copied to the board. 
+After running the tcl file, the ```.bit``` and ```.hmh``` files will be located in a newly created directory called `/OverlayFiles`
+Move these files: (assumes that you are currently in `~/Convolution_ACC`)
+```sh 
+mkdir sw/overlay
+cp -r OverlayFiles/* sw/overlay/
+```
 
 ### 3. (Optional) Clean up the workspace
+This will remove **ALL** files created by the script. Make sure that desired files (Overlay files) are moved outside of it's original directory before running.
+
 Run: 
 ```sh 
 tclsh cleanup.tcl 
 ```
-This will remove **ALL** files created by the script. Make sure that desired files (Overlay files) are saved outside of it's original directory.
- 
+
 
 ## 3. Run on the PYNQ-Z2 Board
 
 ### Step 1: Copy the overlay to the board
 
-*If following the manual process:*
+#### *If following the manual process:*
 After `build.tcl` finishes, the bitstream and HWH are in `sw/overlay/`. 
 
-*If using the tcl build script* 
+#### *If using the tcl build script* 
 After Vivado exits and you see: 
 ```
 INFO: ====== SUCCESS: Bitstream Generated ======
