@@ -1,211 +1,124 @@
 # 07 — Build Instructions
 
-This document covers three reproducible flows: running the UVM simulation, rebuilding the Vivado project and bitstream, and running the IP on the PYNQ-Z2 board. Each flow is automated to the extent that is practical using Vivado shell.
-Look at `doc/sw/demo`  for a devicedemo.ipynb if only interested in running a demo on the device. All the necessary files and instructions are provided there. Do upload the `sw` folder on to your jupyter notebook directory
+This document covers three reproducible flows: running the UVM simulation, rebuilding the Vivado project and bitstream, and running the IP on the PYNQ-Z2 board. The entire Vivado flow — simulation, IP packaging, block design assembly, synthesis, implementation, and bitstream generation — is driven by a single Tcl script ([`run.tcl`](https://github.com/DhruvDes/Convoloution_ACC/blob/main/run.tcl)). A companion [`cleanup.tcl`](https://github.com/DhruvDes/Convoloution_ACC/blob/main/cleanup.tcl) removes all generated artifacts for a clean rebuild.
+
+The full repository is at <https://github.com/DhruvDes/Convoloution_ACC>.
+
+Look at `doc/sw/demo` for a `devicedemo.ipynb` if you only want to run it on the device. All necessary files and instructions are provided there. Upload the `sw` folder onto your Jupyter notebook directory.
 
 ## Prerequisites
 
 | Tool | Version used | Notes |
 |---|---|---|
-| Vivado | 2025.2 | Vivado Simulator (`xsim`) is used for UVM |
+| Vivado | 2025.2 | Vivado Simulator (`xsim`) is used for UVM; [`recreate_bd.tcl`](https://github.com/DhruvDes/Convoloution_ACC/blob/main/recreate_bd.tcl) checks version on entry |
 | Python | 3.8+ | For the PYNQ driver and notebook |
 | PYNQ image | v3.0.1 | Pre-installed on the PYNQ-Z2 SD card |
 | Target board | PYNQ-Z2 (xc7z020clg400-1) | — |
 
 No Xilinx-specific environment setup is required beyond sourcing `settings64.sh` (Linux) or running the Vivado command prompt (Windows) so `vivado` is on `PATH`.
 
-There are two methods of building: [manually](#manual-build-instructions), or by using the [tcl build script](#tcl-automatic-build-script-instructions---runtcl) which automates the manual build process.
+The PYNQ-Z2 board files must be available to Vivado. [`run.tcl`](https://github.com/DhruvDes/Convoloution_ACC/blob/main/run.tcl) looks for a local `boards/` folder next to the script and registers it automatically; if the folder is missing it prints a warning and falls back to the system-installed board definition.
 
-## *Manual Build Instructions:*
+## 1. Run the Full Build (Simulation → Bitstream)
 
-### 1. Run the UVM Simulation
-
-The simulation is fully automated and requires no GUI interaction.
+Everything is driven by a single command:
 
 ```bash
-cd sim
-./run_sim.sh
+vivado -mode batch -source run.tcl
 ```
 
-`run_sim.sh` compiles the RTL under `rtl/`, the TB under `tb/`, elaborates `top`, and runs the UVM test to completion. Expected output on success:
+[`run.tcl`](https://github.com/DhruvDes/Convoloution_ACC/blob/main/run.tcl) executes five phases in order:
+
+1. **UVM Simulation** — creates a temporary `sim_only` project, compiles all RTL from `RTL/` and the UVM TB top from `TB/top.sv`, runs the test to completion, and parses the simulator log for `UVM_FATAL` / `UVM_ERROR`. If either count is non-zero the script exits with code 1 and deletes the temporary project; no bitstream is produced.
+
+2. **IP Packaging** — creates a temporary `ip_pack` project, adds the RTL sources, and packages the design as `convAcc2d` (vendor `xilinx.com`, library `user`, version `3.0`) into a local `ip_repo/` directory.
+
+3. **Block Design** — creates the `convAccTop` project, registers `ip_repo/` in the project's IP catalog, and sources [`recreate_bd.tcl`](https://github.com/DhruvDes/Convoloution_ACC/blob/main/recreate_bd.tcl) to build the `convacc` block design from scratch.
+
+4. **Synthesis & Implementation** — launches synthesis and implementation (8 parallel jobs each), including bitstream generation. The script checks `PROGRESS` after each run and exits with code 1 on failure.
+
+5. **Output Copy** — copies the bitstream and hardware handoff file to the `OverlayFiles/` directory as `convAcc.bit` and `convAcc.hwh`.
+
+On success the final console output is:
+
+```
+INFO: ====== DONE — overlay files at OverlayFiles/convAcc.bit/.hwh ======
+```
+
+Build time on a modern laptop: **20–30 minutes**. The last five minutes is bitstream generation; everything before is synthesis and place-and-route.
+
+### What `run.tcl` produces
+
+| Output | Path |
+|---|---|
+| Bitstream | `OverlayFiles/convAcc.bit` |
+| Hardware handoff | `OverlayFiles/convAcc.hwh` |
+| Vivado project | `convAccTop/convAccTop.xpr` |
+| Packaged IP | `ip_repo/` |
+| Simulation log | `sim_only/sim_only.sim/sim_1/behav/xsim/simulate.log` (deleted on success) |
+
+### Simulation-only pass/fail
+
+If you only want to verify the RTL without building a bitstream, you can still run the full [`run.tcl`](https://github.com/DhruvDes/Convoloution_ACC/blob/main/run.tcl); it will exit early on simulation failure. The temporary `sim_only/` project is deleted after the simulation phase regardless of outcome.
+
+Expected simulation output on success:
 
 ```
 UVM_INFO … MATRIX SIZE COVERAGE: 100.00% (12 / 12 sizes hit)
 UVM_INFO … ** UVM TEST PASSED ** : 0 UVM_ERROR reports, 0 UVM_FATAL reports
 ```
 
-Optional flags:
+### What `recreate_bd.tcl` does
 
-```bash
-./run_sim.sh --gui          # open xsim GUI with the waveform config pre-loaded
-./run_sim.sh --coverage     # enable functional coverage database export
-./run_sim.sh --clean        # delete the xsim work directory and rebuild from scratch
-```
+[`recreate_bd.tcl`](https://github.com/DhruvDes/Convoloution_ACC/blob/main/recreate_bd.tcl) is a Vivado-generated block design Tcl script (produced by `write_bd_tcl` in the GUI). It is sourced by [`run.tcl`](https://github.com/DhruvDes/Convoloution_ACC/blob/main/run.tcl) — never run standalone. It recreates the `convacc` block design containing:
 
-Artifacts are written to `sim/reports/`:
+- **PS7** (`processing_system7_0`) — Zynq PS configured for the PYNQ-Z2 with FCLK_CLK0 at 125 MHz, S_AXI_HP0 and S_AXI_HP2 enabled.
+- **AXI DMA** — scatter-gather disabled, 64-bit memory-mapped data widths, 32-bit stream data width, 256-beat bursts, 26-bit transfer length.
+- **Two AXI Interconnects** — one for the MM2S read path (HP2) and one for the S2MM write path (HP0).
+- **convAcc2d_0** — the packaged convolution accelerator IP, connected AXI-Stream-to-Stream through the DMA.
+- **Processor System Reset** — driven by FCLK_RESET0_N.
 
-- `sim_log.txt` — full simulator transcript
-- `coverage.html` — functional coverage report (if `--coverage`)
-- `waves.wdb` — waveform database (if `--gui` or explicitly requested)
+The script checks that all required IPs are present in the catalog (`axi_dma:7.1`, `processing_system7:5.5`, `proc_sys_reset:5.0`, `convAcc2d:3.0`) and aborts if any are missing.
 
-#### What `run_sim.sh` does internally
+### Why the block design is a Tcl script, not a `.bd` file
 
-```bash
-xvlog -sv -f compile.f              # compile RTL + TB from compile.f file list
-xelab -L uvm top -s top_sim         # elaborate with UVM precompiled library
-xsim top_sim -R -testplusarg "UVM_TESTNAME=test" | tee reports/sim_log.txt
-```
-
-The file list `compile.f` lists every `.sv` in dependency order and is the single source of truth for "which files are part of the design and TB".
-
-### 2. Rebuild the Vivado Project and Bitstream
-
-The entire Vivado flow — project creation, IP packaging, block design assembly, synthesis, implementation, bitstream generation, and report export — is scripted.
-
-```bash
-cd synth
-vivado -mode batch -source build.tcl
-```
-
-This produces:
-
-- `synth/build/conv_acc.xpr` — the reproducible Vivado project
-- `synth/build/conv_acc.runs/impl_1/design_1_wrapper.bit` — the bitstream
-- `synth/build/conv_acc.runs/impl_1/design_1_wrapper.hwh` — the hardware handoff file PYNQ needs
-- `synth/reports/utilization.rpt` — post-implementation utilization
-- `synth/reports/timing_summary.rpt` — post-implementation timing
-- `synth/reports/power.rpt` — power estimate
-- `synth/reports/drc.rpt` — design rule check output
-
-Build time on a modern laptop: **20–30 minutes**. The last 5 minutes is bitstream generation; everything before is synthesis and place-and-route.
-
-#### What `build.tcl` does
-
-```tcl
-# 1. Create a fresh project
-create_project conv_acc ./build -part xc7z020clg400-1 -force
-
-# 2. Add RTL sources
-add_files [glob ../rtl/*.sv]
-
-# 3. Package the RTL as an IP and add it to the catalog
-source ../ip/package_ip.tcl
-
-# 4. Recreate the block design from its Tcl script
-source ../bd/system_bd.tcl
-make_wrapper -files [get_files system.bd] -top -import
-
-# 5. Add the timing constraints
-add_files -fileset constrs_1 ../synth/constraints.xdc
-
-# 6. Run synthesis and implementation
-launch_runs synth_1 -jobs 4
-wait_on_run synth_1
-launch_runs impl_1 -to_step write_bitstream -jobs 4
-wait_on_run impl_1
-
-# 7. Export reports
-open_run impl_1
-report_utilization     -file ../synth/reports/utilization.rpt
-report_timing_summary  -file ../synth/reports/timing_summary.rpt
-report_power           -file ../synth/reports/power.rpt
-report_drc             -file ../synth/reports/drc.rpt
-
-# 8. Copy the bitstream + HWH to sw/overlay for board deployment
-file copy -force ./build/conv_acc.runs/impl_1/design_1_wrapper.bit ../sw/overlay/conv_acc.bit
-file copy -force ./build/conv_acc.gen/sources_1/bd/design_1/hw_handoff/design_1.hwh ../sw/overlay/conv_acc.hwh
-```
-
-#### Why the block design is a Tcl script, not a `.bd` file
-
-`.bd` files are binary-ish XML, tool-version-locked, and not reviewable in a diff. The block design is therefore stored as `bd/system_bd.tcl`, generated once via the Vivado GUI command:
-
-```tcl
-write_bd_tcl ../bd/system_bd.tcl
-```
-
-The Tcl script recreates the BD from scratch on every build, so the repo carries a text-only, reviewable, version-stable description of the platform integration. If a change to the BD is needed, the workflow is:
+`.bd` files are binary-ish XML, tool-version-locked, and not reviewable in a diff. [`recreate_bd.tcl`](https://github.com/DhruvDes/Convoloution_ACC/blob/main/recreate_bd.tcl) recreates the BD from scratch on every build, so the repo carries a text-only, reviewable, version-stable description of the platform integration. If a change to the BD is needed, the workflow is:
 
 1. Open the project in the GUI.
 2. Make the change in the BD editor.
-3. Re-run `write_bd_tcl` to overwrite `bd/system_bd.tcl`.
+3. Re-run `write_bd_tcl` to overwrite [`recreate_bd.tcl`](https://github.com/DhruvDes/Convoloution_ACC/blob/main/recreate_bd.tcl).
 4. Commit the diff.
 
-#### Why the IP is re-packaged from RTL, not committed as a packaged IP directory
+### Why the IP is re-packaged from RTL, not committed as a packaged IP directory
 
-Same reasoning: the packaged IP contains auto-generated `component.xml` and `xgui/` files that are redundant with the RTL and the IP-packaging Tcl. Committing just `ip/package_ip.tcl` means the IP is regenerated from its RTL on every build, so the RTL and the IP-catalog entry can never drift out of sync.
+The packaged IP contains auto-generated `component.xml` and `xgui/` files that are redundant with the RTL and the IP-packaging Tcl in [`run.tcl`](https://github.com/DhruvDes/Convoloution_ACC/blob/main/run.tcl). Re-packaging from RTL on every build means the IP-catalog entry and the RTL can never drift out of sync.
 
-## *Tcl (Automatic) Build Script Instructions* - run.tcl
+## 2. Run on the PYNQ-Z2 Board
 
-The run.tcl script handles the Vivado build pipeline and provides the overlay file necessary for running it on the Pynq hardware. 
-What run.tcl does:
-- Creates/recreates the Vivado project
-- Packages the RTL as a custom IP
-- Runs synthesis and implementation
-- Generates the .bit bitstream and .hwh hardware description file
+### Step 1 — Copy the overlay to the board
 
-### 1. Run the build script
-
-Run in batch mode with:
-```sh
-vivado -mode batch -source run.tcl -notrace
-```
-The -notrace flag suppresses command echoing for cleaner output.
-
-### 2. Copy the overlay files
-
-After running the tcl file, Vivado exits, you see: 
-```
-INFO: ====== SUCCESS: Bitstream Generated ======
-INFO: Copied convAcc.bit and convAcc.hwh to /home/user/Convoloution_ACC/OverlayFiles
-INFO: ====== DONE — overlay files at OverlayFiles/convAcc.bit/.hwh ======
-```
-The ```.bit``` and ```.hmh``` files will be located in a newly created directory called `/OverlayFiles`
-
-Move these files: (assuming that you are currently in `~/Convolution_ACC`)
-```sh 
-mkdir sw/overlay
-cp -r OverlayFiles/* sw/overlay/
-```
-
-### 3. (Optional) Clean up the workspace
-
-This will remove **ALL** files created by the script. Make sure that desired files (Overlay files) are moved outside of it's original directory before running.
-Run: 
-```sh 
-tclsh cleanup.tcl 
-```
-
-
-## 3. Run on the PYNQ-Z2 Board
-
-### Step 1: Copy the overlay to the board
-After `build.tcl` or `run.tcl` finishes, the bitstream and HWH are in `sw/overlay/`. 
-
-
-#### Copy them (plus the notebook) to the PYNQ board:
+After [`run.tcl`](https://github.com/DhruvDes/Convoloution_ACC/blob/main/run.tcl) finishes, the bitstream and HWH are in `OverlayFiles/`. Copy them (plus the notebook) to the PYNQ board:
 
 ```bash
-# From a workstation on the same network as the PYNQ
-scp sw/overlay/conv_acc.bit       xilinx@<pynq-ip>:/home/xilinx/jupyter_notebooks/conv_acc/
-scp sw/overlay/conv_acc.hwh       xilinx@<pynq-ip>:/home/xilinx/jupyter_notebooks/conv_acc/
+scp OverlayFiles/convAcc.bit \
+    xilinx@<pynq-ip>:/home/xilinx/jupyter_notebooks/conv_acc/
+scp OverlayFiles/convAcc.hwh \
+    xilinx@<pynq-ip>:/home/xilinx/jupyter_notebooks/conv_acc/
 scp sw/Benchmark_Arm_and_Acclerator_after_implimentation.ipynb \
     xilinx@<pynq-ip>:/home/xilinx/jupyter_notebooks/conv_acc/
 ```
 
 Default PYNQ password is `xilinx`.
 
-> **Note on the bitstream filename:** the notebook currently loads `conv100m.bit` — this is a legacy name from an earlier 100 MHz build. The submitted bitstream actually runs at 125 MHz. Either rename `conv_acc.bit` → `conv100m.bit` before copying (simplest, keeps the notebook unchanged) or edit the `BITSTREAM_PATH` variable in the notebook to match the new filename.
-
-### Step 2: Open the notebook
+### Step 2 — Open the notebook
 
 From a browser: `http://<pynq-ip>:9090` → `conv_acc/Benchmark_Arm_and_Acclerator_after_implimentation.ipynb`.
 
-### Step 3: Run the notebook
+### Step 3 — Run the notebook
 
 Kernel → Restart & Run All. The notebook:
 
-1. Loads the overlay (`Overlay('conv_acc.bit')`).
+1. Loads the overlay (`Overlay('convAcc.bit')`).
 2. Allocates CMA DMA buffers.
 3. Runs the 20,000-image CPU pass for Test A, then the FPGA pass, and prints a summary.
 4. Repeats for Test B.
@@ -235,47 +148,59 @@ Test B summary:
 
 Exact numbers will vary by a few percent depending on PYNQ image version, DDR contention, and background processes.
 
-## 4. Run Only the Benchmarks (Pre-Bitstream)
+## 3. Run Only the Benchmarks (Pre-Bitstream)
 
-The `benchmarks/` directory contains the original x86 and Arm scipy benchmarks used to motivate the project (see `docs/01_operations.md`). These do not require the FPGA:
+The [`[2]_Benchmarking`](https://github.com/DhruvDes/Convoloution_ACC/tree/main/%5B2%5D_Benchmarking) directory contains the original x86 and Arm scipy benchmarks used to motivate the project (see `docs/01_operations.md`). These do not require the FPGA:
 
 ```bash
-cd benchmarks
+cd [2]_Benchmarking
 jupyter notebook benchmark_x86.ipynb     # run on an x86 workstation
 jupyter notebook benchmark_arm.ipynb     # run on the PYNQ Arm (no overlay needed)
 ```
 
-Each writes a PNG of its results into `benchmarks/results/`.
+Each writes a PNG of its results into the same directory.
 
-## Clean Builds
+## 4. Clean Builds
 
 To remove all generated artifacts and start fresh:
 
 ```bash
-cd synth && rm -rf build/ reports/*.rpt
-cd ../sim && rm -rf xsim.dir/ *.log *.jou reports/*
+vivado -mode batch -source cleanup.tcl
 ```
 
-The `.gitignore` at the repo root is configured to ignore these directories, so they will never be accidentally committed.
+Or, if Vivado is not available (pure Tcl):
+
+```bash
+tclsh cleanup.tcl
+```
+
+[`cleanup.tcl`](https://github.com/DhruvDes/Convoloution_ACC/blob/main/cleanup.tcl) deletes the following directories and loose files:
+
+| Directories removed | Loose file patterns removed |
+|---|---|
+| `.done`, `ip_repo`, `ip_pack`, `sim_only`, `convAccTop`, `OverlayFiles` | `*.jou`, `*.log`, `*.str`, `*.xsa`, `*.jou.bak`, `.Xil`, `dfx_runtime.txt` |
+
+The [`.gitignore`](https://github.com/DhruvDes/Convoloution_ACC/blob/main/.gitignore) at the repo root is configured to ignore these directories and patterns, so they will never be accidentally committed.
 
 ## Directory Map for This Document
 
-Every path in this document is relative to the repo root.
+Every path is relative to the repo root.
 
 | Path | Used by |
 |---|---|
-| `sim/run_sim.sh` | Step 1 |
-| `sim/compile.f` | Step 1 (file list) |
-| `sim/reports/` | Step 1 output |
-| `synth/build.tcl` | Step 2 |
-| `synth/constraints.xdc` | Step 2 (timing constraints) |
-| `synth/reports/` | Step 2 output |
-| `ip/package_ip.tcl` | Step 2 (sourced by build.tcl) |
-| `bd/system_bd.tcl` | Step 2 (sourced by build.tcl) |
-| `rtl/*.sv` | Step 2 source |
-| `tb/*.sv` | Step 1 source |
-| `sw/overlay/` | Step 2 output → Step 3 input |
-| `sw/Benchmark_Arm_and_Acclerator_after_implimentation.ipynb` | Step 3 |
-| `benchmarks/*.ipynb` | Step 4 |
+| [`run.tcl`](https://github.com/DhruvDes/Convoloution_ACC/blob/main/run.tcl) | Section 1 (full build) |
+| [`recreate_bd.tcl`](https://github.com/DhruvDes/Convoloution_ACC/blob/main/recreate_bd.tcl) | Section 1 (sourced by `run.tcl`) |
+| [`cleanup.tcl`](https://github.com/DhruvDes/Convoloution_ACC/blob/main/cleanup.tcl) | Section 4 (clean builds) |
+| `RTL/*.sv`, `RTL/*.v` | Section 1 (design sources) |
+| `TB/top.sv` | Section 1 (UVM testbench top) |
+| `boards/` | Section 1 (local PYNQ-Z2 board files, optional) |
+| `ip_repo/` | Section 1 (generated, packaged IP) |
+| `OverlayFiles/` | Section 1 output → Section 2 input |
+| `sw/Benchmark_Arm_and_Acclerator_after_implimentation.ipynb` | Section 2 |
+| [`[2]_Benchmarking/`](https://github.com/DhruvDes/Convoloution_ACC/tree/main/%5B2%5D_Benchmarking) | Section 3 |
+| [`[1]_Python_Experiments/`](https://github.com/DhruvDes/Convoloution_ACC/tree/main/%5B1%5D_Python_Experiments) | Reference (early Python prototypes) |
+| [`[3]_Data_wb_test/`](https://github.com/DhruvDes/Convoloution_ACC/tree/main/%5B3%5D_Data_wb_test) | Reference (data path testing) |
+| [`[4]_Design/`](https://github.com/DhruvDes/Convoloution_ACC/tree/main/%5B4%5D_Design) | Reference (design assets) |
+| [`design_req.md`](https://github.com/DhruvDes/Convoloution_ACC/blob/main/design_req.md) | Reference (design requirements spec) |
 
 If any of these paths is missing from the repo, the build infrastructure is incomplete — this is the checklist to verify against before tagging a release.
