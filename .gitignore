@@ -1,1 +1,10 @@
 archive/Benchmarking/testSet
+*.jou
+*.log
+*.str
+*.xsa
+*.jou.bak
+.Xil
+dfx_runtime.txt
+NA/
+archive/Benchmarking/testSet
