@@ -1,20 +1,21 @@
 # 07 — Build Instructions
 
 This document covers three reproducible flows: running the UVM simulation, rebuilding the Vivado project and bitstream, and running the IP on the PYNQ-Z2 board. Each flow is automated to the extent that is practical using Vivado shell.
-Look at `doc/sw/demo`  for a devicedemo.ipynb if only inserted in running it on the device. All the necessary files and instructions are provided there. Do upload the `sw` folder on to your jupyter notebook directory
+Look at `doc/sw/demo`  for a devicedemo.ipynb if only interested in running a demo on the device. All the necessary files and instructions are provided there. Do upload the `sw` folder on to your jupyter notebook directory
 
 ## Prerequisites
 
 | Tool | Version used | Notes |
 |---|---|---|
-| Vivado | 2023.1 or later | Vivado Simulator (`xsim`) is used for UVM; any recent edition works |
+| Vivado | 2025.2 | Vivado Simulator (`xsim`) is used for UVM; any recent edition works |
 | Python | 3.8+ | For the PYNQ driver and notebook |
 | PYNQ image | v3.0.1 | Pre-installed on the PYNQ-Z2 SD card |
 | Target board | PYNQ-Z2 (xc7z020clg400-1) | — |
 
 No Xilinx-specific environment setup is required beyond sourcing `settings64.sh` (Linux) or running the Vivado command prompt (Windows) so `vivado` is on `PATH`.
 
-## 1. Run the UVM Simulation
+## Manual Build Instructions: 
+### 1. Run the UVM Simulation
 
 The simulation is fully automated and requires no GUI interaction.
 
@@ -44,7 +45,7 @@ Artifacts are written to `sim/reports/`:
 - `coverage.html` — functional coverage report (if `--coverage`)
 - `waves.wdb` — waveform database (if `--gui` or explicitly requested)
 
-### What `run_sim.sh` does internally
+#### What `run_sim.sh` does internally
 
 ```bash
 xvlog -sv -f compile.f              # compile RTL + TB from compile.f file list
@@ -54,7 +55,7 @@ xsim top_sim -R -testplusarg "UVM_TESTNAME=test" | tee reports/sim_log.txt
 
 The file list `compile.f` lists every `.sv` in dependency order and is the single source of truth for "which files are part of the design and TB".
 
-## 2. Rebuild the Vivado Project and Bitstream
+### 2. Rebuild the Vivado Project and Bitstream
 
 The entire Vivado flow — project creation, IP packaging, block design assembly, synthesis, implementation, bitstream generation, and report export — is scripted.
 
@@ -75,7 +76,7 @@ This produces:
 
 Build time on a modern laptop: **20–30 minutes**. The last 5 minutes is bitstream generation; everything before is synthesis and place-and-route.
 
-### What `build.tcl` does
+#### What `build.tcl` does
 
 ```tcl
 # 1. Create a fresh project
@@ -112,7 +113,7 @@ file copy -force ./build/conv_acc.runs/impl_1/design_1_wrapper.bit ../sw/overlay
 file copy -force ./build/conv_acc.gen/sources_1/bd/design_1/hw_handoff/design_1.hwh ../sw/overlay/conv_acc.hwh
 ```
 
-### Why the block design is a Tcl script, not a `.bd` file
+#### Why the block design is a Tcl script, not a `.bd` file
 
 `.bd` files are binary-ish XML, tool-version-locked, and not reviewable in a diff. The block design is therefore stored as `bd/system_bd.tcl`, generated once via the Vivado GUI command:
 
@@ -127,15 +128,54 @@ The Tcl script recreates the BD from scratch on every build, so the repo carries
 3. Re-run `write_bd_tcl` to overwrite `bd/system_bd.tcl`.
 4. Commit the diff.
 
-### Why the IP is re-packaged from RTL, not committed as a packaged IP directory
+#### Why the IP is re-packaged from RTL, not committed as a packaged IP directory
 
 Same reasoning: the packaged IP contains auto-generated `component.xml` and `xgui/` files that are redundant with the RTL and the IP-packaging Tcl. Committing just `ip/package_ip.tcl` means the IP is regenerated from its RTL on every build, so the RTL and the IP-catalog entry can never drift out of sync.
+
+## Tcl Build Script (run.tcl)
+The run.tcl script handles the Vivado build pipeline and provides the overlay file necessary for running it on the Pynq hardware. 
+What run.tcl does:
+- Creates/recreates the Vivado project
+- Packages the RTL as a custom IP
+- Runs synthesis and implementation
+- Generates the .bit bitstream and .hwh hardware description file
+
+### 1. Run the build script
+Run in batch mode with:
+```sh
+vivado -mode batch -source run.tcl -notrace
+```
+The -notrace flag suppresses command echoing for cleaner output.
+
+### 2. Copy the overlay files
+After running the tcl file, the ```.bit``` and ```.hmh``` files will be located in a new directory called `/OverlayFiles`
+Save these files somewhere outside of `/OverlayFiles` such that they can be copied to the board. 
+
+### 3. (Optional) Clean up the workspace
+Run: 
+```sh 
+tclsh cleanup.tcl 
+```
+This will remove **ALL** files created by the script. Make sure that desired files (Overlay files) are saved outside of it's original directory.
+ 
 
 ## 3. Run on the PYNQ-Z2 Board
 
 ### Step 1: Copy the overlay to the board
 
-After `build.tcl` finishes, the bitstream and HWH are in `sw/overlay/`. Copy them (plus the notebook) to the PYNQ board:
+*If following the manual process:*
+After `build.tcl` finishes, the bitstream and HWH are in `sw/overlay/`. 
+
+*If using the tcl build script* 
+After Vivado exits and you see: 
+```
+INFO: ====== SUCCESS: Bitstream Generated ======
+INFO: Copied convAcc.bit and convAcc.hwh to /home/user/Convoloution_ACC/OverlayFiles
+INFO: ====== DONE — overlay files at OverlayFiles/convAcc.bit/.hwh ======
+```
+The bitstream and HWH are in `OverlayFiles`. 
+
+#### Copy them (plus the notebook) to the PYNQ board:
 
 ```bash
 # From a workstation on the same network as the PYNQ
