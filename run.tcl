@@ -51,7 +51,7 @@ set_property -name {xsim.elaborate.xelab.more_options} \
 
 
 set_property -name {xsim.simulate.xsim.more_options} \
-    -value {-testplusarg UVM_TESTNAME=test -testplusarg UVM_VERBOSITY=UVM_MEDIUM -sv_seed 19022001} \
+    -value {-testplusarg UVM_TESTNAME=test -testplusarg UVM_VERBOSITY=UVM_MEDIUM} \
     -objects [get_filesets sim_1]
 # ── 2. Run UVM simulation ───────────────────────────────────────
 puts "INFO: ====== Running UVM Simulation ======"

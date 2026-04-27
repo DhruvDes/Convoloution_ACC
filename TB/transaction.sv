@@ -24,12 +24,12 @@ class trn extends uvm_sequence_item;
  
   // data[] must hold exactly rows*row_width pixels plus the dummy byte at [0]
   constraint data_size_c {
-    soft data.size() == rows * row_width + 1;
+     data.size() == rows * row_width + 1;
   }
  
   // Pixel count must be a multiple of 4 for clean 32-bit packing
   constraint align_c {
-    soft (rows * row_width) % 4 == 0;
+     (rows * row_width) % 4 == 0;
   }
   
   
