@@ -14,7 +14,7 @@ Look at `doc/sw/demo`  for a devicedemo.ipynb if only interested in running a de
 
 No Xilinx-specific environment setup is required beyond sourcing `settings64.sh` (Linux) or running the Vivado command prompt (Windows) so `vivado` is on `PATH`.
 
-## Manual Build Instructions: 
+## *Manual Build Instructions:*
 ### 1. Run the UVM Simulation
 
 The simulation is fully automated and requires no GUI interaction.
@@ -132,7 +132,7 @@ The Tcl script recreates the BD from scratch on every build, so the repo carries
 
 Same reasoning: the packaged IP contains auto-generated `component.xml` and `xgui/` files that are redundant with the RTL and the IP-packaging Tcl. Committing just `ip/package_ip.tcl` means the IP is regenerated from its RTL on every build, so the RTL and the IP-catalog entry can never drift out of sync.
 
-## Tcl Build Script Instructions (run.tcl)
+## *Tcl (Automatic) Build Script Instructions* - run.tcl
 The run.tcl script handles the Vivado build pipeline and provides the overlay file necessary for running it on the Pynq hardware. 
 What run.tcl does:
 - Creates/recreates the Vivado project
@@ -148,8 +148,15 @@ vivado -mode batch -source run.tcl -notrace
 The -notrace flag suppresses command echoing for cleaner output.
 
 ### 2. Copy the overlay files
-After running the tcl file, the ```.bit``` and ```.hmh``` files will be located in a newly created directory called `/OverlayFiles`
-Move these files: (assumes that you are currently in `~/Convolution_ACC`)
+After running the tcl file, Vivado exits, you see: 
+```
+INFO: ====== SUCCESS: Bitstream Generated ======
+INFO: Copied convAcc.bit and convAcc.hwh to /home/user/Convoloution_ACC/OverlayFiles
+INFO: ====== DONE — overlay files at OverlayFiles/convAcc.bit/.hwh ======
+```
+The ```.bit``` and ```.hmh``` files will be located in a newly created directory called `/OverlayFiles`
+
+Move these files: (assuming that you are currently in `~/Convolution_ACC`)
 ```sh 
 mkdir sw/overlay
 cp -r OverlayFiles/* sw/overlay/
@@ -167,18 +174,8 @@ tclsh cleanup.tcl
 ## 3. Run on the PYNQ-Z2 Board
 
 ### Step 1: Copy the overlay to the board
+After `build.tcl` or `run.tcl` finishes, the bitstream and HWH are in `sw/overlay/`. 
 
-#### *If following the manual process:*
-After `build.tcl` finishes, the bitstream and HWH are in `sw/overlay/`. 
-
-#### *If using the tcl build script* 
-After Vivado exits and you see: 
-```
-INFO: ====== SUCCESS: Bitstream Generated ======
-INFO: Copied convAcc.bit and convAcc.hwh to /home/user/Convoloution_ACC/OverlayFiles
-INFO: ====== DONE — overlay files at OverlayFiles/convAcc.bit/.hwh ======
-```
-The bitstream and HWH are in `OverlayFiles`. 
 
 #### Copy them (plus the notebook) to the PYNQ board:
 
