@@ -7,7 +7,7 @@ Look at `doc/sw/demo`  for a devicedemo.ipynb if only interested in running a de
 
 | Tool | Version used | Notes |
 |---|---|---|
-| Vivado | 2025.2 | Vivado Simulator (`xsim`) is used for UVM; any recent edition works |
+| Vivado | 2025.2 | Vivado Simulator (`xsim`) is used for UVM |
 | Python | 3.8+ | For the PYNQ driver and notebook |
 | PYNQ image | v3.0.1 | Pre-installed on the PYNQ-Z2 SD card |
 | Target board | PYNQ-Z2 (xc7z020clg400-1) | — |
@@ -132,7 +132,7 @@ The Tcl script recreates the BD from scratch on every build, so the repo carries
 
 Same reasoning: the packaged IP contains auto-generated `component.xml` and `xgui/` files that are redundant with the RTL and the IP-packaging Tcl. Committing just `ip/package_ip.tcl` means the IP is regenerated from its RTL on every build, so the RTL and the IP-catalog entry can never drift out of sync.
 
-## Tcl Build Script (run.tcl)
+## Tcl Build Script Instructions (run.tcl)
 The run.tcl script handles the Vivado build pipeline and provides the overlay file necessary for running it on the Pynq hardware. 
 What run.tcl does:
 - Creates/recreates the Vivado project
