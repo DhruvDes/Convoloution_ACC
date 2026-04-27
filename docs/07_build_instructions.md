@@ -14,7 +14,10 @@ Look at `doc/sw/demo`  for a devicedemo.ipynb if only interested in running a de
 
 No Xilinx-specific environment setup is required beyond sourcing `settings64.sh` (Linux) or running the Vivado command prompt (Windows) so `vivado` is on `PATH`.
 
+There are two methods of building: [manually](#manual-build-instructions), or by using the [tcl-build-script](#tcl-automatic-build-script-instructions---runtcl) 
+
 ## *Manual Build Instructions:*
+
 ### 1. Run the UVM Simulation
 
 The simulation is fully automated and requires no GUI interaction.
@@ -133,6 +136,7 @@ The Tcl script recreates the BD from scratch on every build, so the repo carries
 Same reasoning: the packaged IP contains auto-generated `component.xml` and `xgui/` files that are redundant with the RTL and the IP-packaging Tcl. Committing just `ip/package_ip.tcl` means the IP is regenerated from its RTL on every build, so the RTL and the IP-catalog entry can never drift out of sync.
 
 ## *Tcl (Automatic) Build Script Instructions* - run.tcl
+
 The run.tcl script handles the Vivado build pipeline and provides the overlay file necessary for running it on the Pynq hardware. 
 What run.tcl does:
 - Creates/recreates the Vivado project
@@ -141,6 +145,7 @@ What run.tcl does:
 - Generates the .bit bitstream and .hwh hardware description file
 
 ### 1. Run the build script
+
 Run in batch mode with:
 ```sh
 vivado -mode batch -source run.tcl -notrace
@@ -148,6 +153,7 @@ vivado -mode batch -source run.tcl -notrace
 The -notrace flag suppresses command echoing for cleaner output.
 
 ### 2. Copy the overlay files
+
 After running the tcl file, Vivado exits, you see: 
 ```
 INFO: ====== SUCCESS: Bitstream Generated ======
@@ -163,8 +169,8 @@ cp -r OverlayFiles/* sw/overlay/
 ```
 
 ### 3. (Optional) Clean up the workspace
-This will remove **ALL** files created by the script. Make sure that desired files (Overlay files) are moved outside of it's original directory before running.
 
+This will remove **ALL** files created by the script. Make sure that desired files (Overlay files) are moved outside of it's original directory before running.
 Run: 
 ```sh 
 tclsh cleanup.tcl 
