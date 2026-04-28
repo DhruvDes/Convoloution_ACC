@@ -84,7 +84,7 @@ In detail requirements of the design is provided in; **design_req.md** -->
 | Verification (sim + on-board) | [docs/05_verification.md](docs/05_verification.md) |
 | Results (utilization, timing, throughput) | [docs/06_results.md](docs/06_results.md) |
 | How to reproduce | [docs/07_build_instructions.md](docs/07_build_instructions.md) |
-| Preproj benchmarks, Induividual testbenches, system driver  | [/Archive](/archive) |
+<!--| Preproj benchmarks, Induividual testbenches, system driver  | [/Archive](/archive) |-->
 
 ## Headline Results
 - **Throughput:** 1 image /~8ms or 125 images per second on PYNQ-Z2 @ 125 MHz
