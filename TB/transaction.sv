@@ -19,7 +19,7 @@ class trn extends uvm_sequence_item;
  
  constraint dim_c {
   rows      inside { 16, 20, 24, 28, 32, 36, 40, 44, 48, 52, 56, 60 };
-  row_width inside { 16, 20, 24, 28, 32, 36, 40, 44, 48, 52, 56, 60 };
+  row_width inside { [16 : 1024] };
 }
  
   // data[] must hold exactly rows*row_width pixels plus the dummy byte at [0]
